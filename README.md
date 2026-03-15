@@ -3,6 +3,7 @@
 ![Book Library Preview](screenshot.png)
 
 A decentralized book library management system built on the Stellar network using Soroban.
+
 ## Project Description
 BOOKLIBRARY is a smart contract that allows for the decentralized management of a digital or physical book collection. It tracks book ownership, availability, and borrowing status on the blockchain, ensuring transparency and accountability in a library system.
 
