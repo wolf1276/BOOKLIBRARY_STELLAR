@@ -1,22 +1,10 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import BookCard, { Book } from "@/components/BookCard";
 
-const ALL_BOOKS: Book[] = [
-  { id: "1",  title: "The Midnight Library",        author: "Matt Haig",            genre: "Fiction",    verified: true,  ipfs_hash: "QmYwAPJzv5CZ...a8f2" },
-  { id: "2",  title: "Dune",                         author: "Frank Herbert",         genre: "Sci-Fi",     verified: true,  ipfs_hash: "QmTaVxm4JiEt...b3c1" },
-  { id: "3",  title: "Neuromancer",                  author: "William Gibson",        genre: "Cyberpunk",  verified: false, ipfs_hash: "QmPK1s3pNYLi...d4e5" },
-  { id: "4",  title: "Foundation",                   author: "Isaac Asimov",          genre: "Sci-Fi",     verified: true,  ipfs_hash: "QmRKs2ZfuwvmZ...f6g7" },
-  { id: "5",  title: "Snow Crash",                   author: "Neal Stephenson",       genre: "Cyberpunk",  verified: true,  ipfs_hash: "QmSn0wCr4sH8...h9i0" },
-  { id: "6",  title: "Hyperion",                     author: "Dan Simmons",           genre: "Sci-Fi",     verified: false, ipfs_hash: "QmHyp3r10nC4n...j1k2" },
-  { id: "7",  title: "1984",                         author: "George Orwell",         genre: "Dystopia",   verified: true,  ipfs_hash: "QmN1n3t3enth8...l3m4" },
-  { id: "8",  title: "Brave New World",              author: "Aldous Huxley",         genre: "Dystopia",   verified: false, ipfs_hash: "QmBr4v3N3wW0rld...n5o6" },
-  { id: "9",  title: "The Name of the Wind",         author: "Patrick Rothfuss",      genre: "Fantasy",    verified: true,  ipfs_hash: "QmN4m3W1nd...p7q8" },
-  { id: "10", title: "The Way of Kings",             author: "Brandon Sanderson",     genre: "Fantasy",    verified: true,  ipfs_hash: "QmW4yK1ngs...r9s0" },
-  { id: "11", title: "Project Hail Mary",            author: "Andy Weir",             genre: "Sci-Fi",     verified: true,  ipfs_hash: "QmPr0j3ctH4il...t1u2" },
-  { id: "12", title: "The Three Body Problem",       author: "Liu Cixin",             genre: "Sci-Fi",     verified: false, ipfs_hash: "QmThr33B0dy...v3w4" },
-];
+// Removed static ALL_BOOKS array
+// We will fetch from the backend instead.
 
 const GENRES = ["All", "Sci-Fi", "Fiction", "Cyberpunk", "Fantasy", "Dystopia"];
 
@@ -24,9 +12,26 @@ export default function LibraryPage() {
   const [search, setSearch] = useState("");
   const [genre, setGenre] = useState("All");
   const [onlyVerified, setOnlyVerified] = useState(false);
+  const [books, setBooks] = useState<Book[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("http://localhost:4000/api/books")
+      .then((res) => res.json())
+      .then((data) => {
+        // Map backend book_id to id for BookCard compatibility
+        const formattedBooks = (data.books || []).map((b: any) => ({
+          ...b,
+          id: b.book_id,
+        }));
+        setBooks(formattedBooks);
+      })
+      .catch((err) => console.error("Error fetching books:", err))
+      .finally(() => setLoading(false));
+  }, []);
 
   const filtered = useMemo(() => {
-    return ALL_BOOKS.filter((b) => {
+    return books.filter((b) => {
       const matchSearch =
         b.title.toLowerCase().includes(search.toLowerCase()) ||
         b.author.toLowerCase().includes(search.toLowerCase());
@@ -53,7 +58,7 @@ export default function LibraryPage() {
           The Library
         </h1>
         <p className="text-gray-400 text-lg max-w-xl" style={{ fontFamily: "'Inter', sans-serif" }}>
-          {ALL_BOOKS.length} books · {ALL_BOOKS.filter((b) => b.verified).length} on-chain verified
+          {books.length} books · {books.filter((b) => b.verified).length} on-chain verified
         </p>
       </div>
 
@@ -106,10 +111,14 @@ export default function LibraryPage() {
 
       {/* Results */}
       <div className="text-xs text-gray-500 mb-6" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-        Showing {filtered.length} of {ALL_BOOKS.length} books
+        Showing {filtered.length} of {books.length} books
       </div>
 
-      {filtered.length === 0 ? (
+      {loading ? (
+        <div className="text-center py-20 text-yellow text-2xl font-black" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+          LOADING BOOKS...
+        </div>
+      ) : filtered.length === 0 ? (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

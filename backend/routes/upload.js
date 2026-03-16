@@ -1,5 +1,6 @@
 import express from "express";
 import crypto from "crypto";
+import { books } from "./books.js";
 
 const router = express.Router();
 
@@ -53,6 +54,9 @@ router.post("/", async (req, res) => {
       verified: true,
       stellar_tx: stellarTxHash,
     };
+
+    // Add to in-memory array so the Library page can see it
+    books.unshift(newBook); // prepend the new book
 
     res.status(201).json({
       message: "Book uploaded and registered on-chain (testnet)",

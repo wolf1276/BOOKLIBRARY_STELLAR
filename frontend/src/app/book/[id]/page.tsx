@@ -1,5 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import VerificationBadge from "@/components/VerificationBadge";
@@ -8,11 +9,7 @@ import BookCard, { Book } from "@/components/BookCard";
 
 const CONTRACT_ID = "CBYNK3NUXBOEWLQQHACBMTH7JLHV4PSNJ22VPSHK77MCZZZZOSC3PBJM";
 
-const BOOKS_DB: Record<string, Book & { description: string; pages?: number; year?: number; language?: string }> = {
-  "1": { id: "1", title: "The Midnight Library", author: "Matt Haig", genre: "Fiction", verified: true, ipfs_hash: "QmYwAPJzv5CZsnAzt8auV39s9sFpfFBTsDLi", owner_wallet: "GBYN...3PBJM", timestamp: 1700000000, description: "Between life and death there is a library. When Nora Seed finds herself there, she has a chance to make things right.", pages: 288, year: 2020, language: "English" },
-  "2": { id: "2", title: "Dune",                 author: "Frank Herbert",   genre: "Sci-Fi",   verified: true,  ipfs_hash: "QmTaVxm4JiEt1VfVbbGAg7DpUq5ahXdHbGKt", owner_wallet: "GBYN...3PBJM", timestamp: 1700100000, description: "Set on the desert planet Arrakis, Dune is the story of the boy Paul Atreides, who would become the mysterious man known as Muad'Dib.", pages: 412, year: 1965, language: "English" },
-  "3": { id: "3", title: "Neuromancer",           author: "William Gibson", genre: "Cyberpunk", verified: false, ipfs_hash: "QmPK1s3pNYLi9ERiq3BDxKa4XosgWwFRQUydH", owner_wallet: "GBYN...3PBJM", timestamp: 1700200000, description: "The Matrix series started here. A groundbreaking novel of the dystopian future of cyberspace.", pages: 271, year: 1984, language: "English" },
-};
+// Removed static BOOKS_DB
 
 const RELATED: Book[] = [
   { id: "4",  title: "Foundation",    author: "Isaac Asimov",    genre: "Sci-Fi",  verified: true,  ipfs_hash: "QmRKs2ZfuwvmZ...f6g7" },
@@ -23,11 +20,41 @@ const RELATED: Book[] = [
 export default function BookDetailPage() {
   const params = useParams();
   const id = params.id as string;
-  const book = BOOKS_DB[id] || BOOKS_DB["1"];
+  const [book, setBook] = useState<Book & { description?: string; pages?: number; year?: number; language?: string } | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`http://localhost:4000/api/books/${id}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Book not found");
+        return res.json();
+      })
+      .then((data) => {
+        setBook({ ...data, id: data.book_id });
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
+  }, [id]);
 
   const coverColors = ["#FFE500", "#0047FF", "#FF2E00", "#00E061", "#FAFAFA"];
-  const coverBg = coverColors[parseInt(id || "1") % coverColors.length];
+  const coverBg = coverColors[parseInt(id || "1") % coverColors.length] || "#0047FF";
   const coverText = coverBg === "#FFE500" || coverBg === "#00E061" || coverBg === "#FAFAFA" ? "#0A0A0A" : "#FAFAFA";
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-off-black pt-28 pb-20 px-6 md:px-16 flex items-center justify-center">
+        <div className="text-yellow text-2xl font-black font-space">LOADING BOOK...</div>
+      </div>
+    );
+  }
+
+  if (!book) {
+    return (
+      <div className="min-h-screen bg-off-black pt-28 pb-20 px-6 md:px-16 flex items-center justify-center">
+        <div className="text-red text-2xl font-black font-space">BOOK NOT FOUND</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-off-black pt-28 pb-20 px-6 md:px-16">

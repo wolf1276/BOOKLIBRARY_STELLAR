@@ -5,7 +5,7 @@ const router = express.Router();
 const CONTRACT_ID = "CBYNK3NUXBOEWLQQHACBMTH7JLHV4PSNJ22VPSHK77MCZZZZOSC3PBJM";
 
 // In-memory store (replace with DB in production)
-let books = [
+export const books = [
   {
     book_id: "1",
     title: "The Midnight Library",
