@@ -1,0 +1,17 @@
+{
+  "name": "booklibrary-stellar-backend",
+  "version": "1.0.0",
+  "description": "BookLibrary Stellar — Express.js API backend",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "@stellar/stellar-sdk": "^12.3.0",
+    "cors": "^2.8.6",
+    "express": "^4.22.1",
+    "multer": "^1.4.5-lts.1"
+  }
+}

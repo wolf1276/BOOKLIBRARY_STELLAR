@@ -1,0 +1,258 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ────────────────────────────────────────────
+   NEO-BRUTALISM DESIGN TOKENS
+──────────────────────────────────────────── */
+:root {
+  /* Brand Colors */
+  --color-yellow: #FFE500;
+  --color-blue:   #0047FF;
+  --color-red:    #FF2E00;
+  --color-green:  #00E061;
+  --color-white:  #FAFAFA;
+  --color-black:  #0A0A0A;
+
+  /* Border */
+  --border-width: 4px;
+  --border-heavy: 6px;
+  --border-color: #0A0A0A;
+
+  /* Shadows */
+  --shadow-sm:  4px  4px  0px #0A0A0A;
+  --shadow-md:  6px  6px  0px #0A0A0A;
+  --shadow-lg:  8px  8px  0px #0A0A0A;
+  --shadow-xl: 12px 12px  0px #0A0A0A;
+  --shadow-hover: 2px 2px 0px #0A0A0A;
+
+  /* Typography */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+/* ────────────────────────────────────────────
+   BASE RESET
+──────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: auto; /* Lenis handles this */
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-black);
+  color: var(--color-white);
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ────────────────────────────────────────────
+   NEO-BRUTALISM UTILITY CLASSES
+──────────────────────────────────────────── */
+@layer components {
+
+  /* Brutalist Box */
+  .brut-box {
+    border: var(--border-width) solid var(--border-color);
+    box-shadow: var(--shadow-md);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+  }
+
+  .brut-box:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translate(4px, 4px);
+  }
+
+  .brut-box-heavy {
+    border: var(--border-heavy) solid var(--border-color);
+    box-shadow: var(--shadow-xl);
+  }
+
+  /* Brutalist Button */
+  .brut-btn {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1rem;
+    border: var(--border-width) solid var(--border-color);
+    box-shadow: var(--shadow-md);
+    padding: 0.75rem 1.75rem;
+    cursor: pointer;
+    transition: box-shadow 0.12s ease, transform 0.12s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+  }
+
+  .brut-btn:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translate(4px, 4px);
+  }
+
+  .brut-btn:active {
+    box-shadow: none;
+    transform: translate(6px, 6px);
+  }
+
+  .brut-btn-yellow { background: var(--color-yellow); color: var(--color-black); }
+  .brut-btn-blue   { background: var(--color-blue);   color: var(--color-white); }
+  .brut-btn-red    { background: var(--color-red);    color: var(--color-white); }
+  .brut-btn-green  { background: var(--color-green);  color: var(--color-black); }
+  .brut-btn-white  { background: var(--color-white);  color: var(--color-black); }
+  .brut-btn-black  { background: var(--color-black);  color: var(--color-white); }
+
+  /* Brutalist Tag */
+  .brut-tag {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 2px solid var(--border-color);
+    padding: 0.2rem 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* Brutalist Card */
+  .brut-card {
+    border: var(--border-width) solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+    background: var(--color-white);
+    color: var(--color-black);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+  }
+
+  /* Heading Styles */
+  .brut-heading {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+  }
+
+  .brut-mono {
+    font-family: var(--font-mono);
+    font-weight: 600;
+  }
+}
+
+/* ────────────────────────────────────────────
+   CUSTOM SCROLLBAR
+──────────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #0A0A0A; }
+::-webkit-scrollbar-thumb {
+  background: var(--color-yellow);
+  border: 2px solid #0A0A0A;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-blue); }
+
+/* ────────────────────────────────────────────
+   PAGE TRANSITION
+──────────────────────────────────────────── */
+.page-transition {
+  animation: fadeSlideIn 0.4s ease forwards;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ────────────────────────────────────────────
+   NOISE OVERLAY (grain texture)
+──────────────────────────────────────────── */
+.noise-overlay::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* ────────────────────────────────────────────
+   FLOATING ANIMATION
+──────────────────────────────────────────── */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33%       { transform: translateY(-12px) rotate(1.5deg); }
+  66%       { transform: translateY(-6px) rotate(-1deg); }
+}
+
+@keyframes float-medium {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50%       { transform: translateY(-18px) rotate(2deg); }
+}
+
+.animate-float-slow   { animation: float-slow   6s ease-in-out infinite; }
+.animate-float-medium { animation: float-medium 4.5s ease-in-out infinite; }
+
+/* ────────────────────────────────────────────
+   GLITCH TEXT EFFECT
+──────────────────────────────────────────── */
+.glitch {
+  position: relative;
+}
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+}
+.glitch::before {
+  color: var(--color-red);
+  animation: glitch-1 3s infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+}
+.glitch::after {
+  color: var(--color-blue);
+  animation: glitch-2 3s infinite;
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+}
+
+@keyframes glitch-1 {
+  0%,94%,100% { transform: none; opacity: 1; }
+  95%         { transform: translate(-2px, 1px); opacity: 0.8; }
+  97%         { transform: translate(2px, -1px); opacity: 0.8; }
+}
+@keyframes glitch-2 {
+  0%,94%,100% { transform: none; opacity: 1; }
+  95%         { transform: translate(2px, -1px); opacity: 0.8; }
+  97%         { transform: translate(-2px, 1px); opacity: 0.8; }
+}
+
+/* ────────────────────────────────────────────
+   MARQUEE / TICKER
+──────────────────────────────────────────── */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 25s linear infinite;
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ────────────────────────────────────────────
+   SELECTION COLOR
+──────────────────────────────────────────── */
+::selection {
+  background: var(--color-yellow);
+  color: var(--color-black);
+}
