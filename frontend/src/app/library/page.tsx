@@ -1,7 +1,8 @@
 "use client";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import BookCard, { Book } from "@/components/BookCard";
+import { useContractBooks } from "@/app/hooks/useContractBooks";
 
 // Removed static ALL_BOOKS array
 // We will fetch from the backend instead.
@@ -12,23 +13,8 @@ export default function LibraryPage() {
   const [search, setSearch] = useState("");
   const [genre, setGenre] = useState("All");
   const [onlyVerified, setOnlyVerified] = useState(false);
-  const [books, setBooks] = useState<Book[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("http://localhost:4000/api/books")
-      .then((res) => res.json())
-      .then((data) => {
-        // Map backend book_id to id for BookCard compatibility
-        const formattedBooks = (data.books || []).map((b: any) => ({
-          ...b,
-          id: b.book_id,
-        }));
-        setBooks(formattedBooks);
-      })
-      .catch((err) => console.error("Error fetching books:", err))
-      .finally(() => setLoading(false));
-  }, []);
+  
+  const { books, loading, error } = useContractBooks();
 
   const filtered = useMemo(() => {
     return books.filter((b) => {

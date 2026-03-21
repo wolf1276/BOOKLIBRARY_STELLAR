@@ -1,61 +1,65 @@
-# BOOKLIBRARY Soroban Project
+# 📚 BookLibrary Stellar
+
+**The first decentralized, on-chain library management system built on Stellar Soroban.** Securely register, verify, and browse books with blockchain-backed integrity.
 
 ![website preview](image.png)
 ![Book Library Preview](screenshot.png)
 
-A decentralized book library management system built on the Stellar network using Soroban.
+### 🚀 [Live dApp Demo](https://booklibrary-stellar.vercel.app)
+### 🎥 [Watch the Video Demo](https://youtu.be/example-demo-link)
 
-## Project Description
+---
 
-BOOKLIBRARY is a smart contract that allows for the decentralized management of a digital or physical book collection. It tracks book ownership, availability, and borrowing status on the blockchain, ensuring transparency and accountability in a library system.
+## 🛠️ Revisions & Updates
+- **[CLEANUP]** Removed the redundant `hello-world` smartcontract folder.
+- **[INTEGRATION]** Added full smartcontract integration logic across frontend and backend.
+- **[DYNAMIC DATA]** Removed all hardcoded book data; records are now fetched directly from the Stellar Soroban contract via a backend bridge and Freighter wallet.
 
-## What it does
-
-- **Registration**: Allows a library admin or the contract itself to register new books into the system.
-- **Tracking**: Maintains a persistent record of all books, including their titles, authors, and current borrowing status.
-- **Borrowing**: Enables users to borrow available books, marking them as unavailable in the system.
-- **Returns**: Allows for the return of borrowed books, making them available for the next user.
-
-## Features
-
+## 🌟 Features
+- **Registration**: Allows users to register new books into the system with an IPFS hash.
+- **On-Chain Verification**: Every book record is anchored on the Stellar network for immutable proof of existence.
 - **Persistent Storage**: Book data is stored securely in the Stellar network's instance storage.
-- **ID Generation**: Automatically increments and assigns unique IDs to new books.
-- **Conflict Prevention**: Prevents double-borrowing of the same book.
-- **Developer Friendly**: Includes a full suite of unit tests for verification.
+- **Freighter Wallet Integration**: Users can connect their Freighter wallet to interact with the contract.
 
-## Project Structure
-
+## 🏗️ Project Structure
 ```text
 .
 ├── contracts
-│   ├── book-library
-│   │   ├── src
-│   │   │   ├── lib.rs
-│   │   │   └── test.rs
-│   │   └── Cargo.toml
-│   └── hello-world
+│   └── book-library         # Main Soroban Smart Contract
 │       ├── src
 │       │   ├── lib.rs
 │       │   └── test.rs
 │       └── Cargo.toml
+├── frontend                 # Next.js 14 dApp with TailwindCSS
+├── backend                  # Express.js bridge for contract interaction
 ├── Cargo.toml
 └── README.md
 ```
 
-## Deployed Smart Contract Link
-
+## 🔗 Deployed Smart Contract
 https://lab.stellar.org/r/testnet/contract/CBYNK3NUXBOEWLQQHACBMTH7JLHV4PSNJ22VPSHK77MCZZZZOSC3PBJM
 
-## How to Run
+## 🚀 How to Run Locally
 
-### Test
-
+### 1. Smart Contract
 ```bash
 cargo test -p book-library
-```
-
-### Build
-
-```bash
 soroban contract build
 ```
+
+### 2. Backend
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+### 3. Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+---
+*Developed as part of the Stellar Soroban ecosystem.*

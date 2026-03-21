@@ -6,16 +6,14 @@ import Link from "next/link";
 import VerificationBadge from "@/components/VerificationBadge";
 import WalletConnect from "@/components/WalletConnect";
 import BookCard, { Book } from "@/components/BookCard";
+import { invokeContract } from "@/utils/stellar";
 
 const CONTRACT_ID = "CBYNK3NUXBOEWLQQHACBMTH7JLHV4PSNJ22VPSHK77MCZZZZOSC3PBJM";
 
 // Removed static BOOKS_DB
 
-const RELATED: Book[] = [
-  { id: "4",  title: "Foundation",    author: "Isaac Asimov",    genre: "Sci-Fi",  verified: true,  ipfs_hash: "QmRKs2ZfuwvmZ...f6g7" },
-  { id: "5",  title: "Snow Crash",    author: "Neal Stephenson", genre: "Cyberpunk", verified: true, ipfs_hash: "QmSn0w...h9i0" },
-  { id: "6",  title: "Hyperion",      author: "Dan Simmons",     genre: "Sci-Fi",  verified: false, ipfs_hash: "QmHyp3r...j1k2" },
-];
+const RELATED: Book[] = [];
+
 
 export default function BookDetailPage() {
   const params = useParams();
@@ -24,16 +22,21 @@ export default function BookDetailPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:4000/api/books/${id}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Book not found");
-        return res.json();
-      })
-      .then((data) => {
-        setBook({ ...data, id: data.book_id });
-      })
-      .catch((err) => console.error(err))
-      .finally(() => setLoading(false));
+    async function fetchBookDetail() {
+      try {
+        const result = await invokeContract("get_book", { book_id: id });
+        if (result) {
+          setBook({ ...result, id: result.book_id });
+        } else {
+          throw new Error("Book not found");
+        }
+      } catch (err) {
+        console.error("Contract fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchBookDetail();
   }, [id]);
 
   const coverColors = ["#FFE500", "#0047FF", "#FF2E00", "#00E061", "#FAFAFA"];

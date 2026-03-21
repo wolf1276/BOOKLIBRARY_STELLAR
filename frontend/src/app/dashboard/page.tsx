@@ -4,33 +4,28 @@ import Link from "next/link";
 import WalletConnect from "@/components/WalletConnect";
 import BookCard, { Book } from "@/components/BookCard";
 import VerificationBadge from "@/components/VerificationBadge";
+import { useContractBooks } from "@/app/hooks/useContractBooks";
 
 const CONTRACT_ID = "CBYNK3NUXBOEWLQQHACBMTH7JLHV4PSNJ22VPSHK77MCZZZZOSC3PBJM";
 
-const BORROWED_BOOKS: Book[] = [
-  { id: "1", title: "The Midnight Library", author: "Matt Haig", genre: "Fiction", verified: true, ipfs_hash: "QmYwAPJzv5CZ...a8f2" },
-  { id: "5", title: "Snow Crash", author: "Neal Stephenson", genre: "Cyberpunk", verified: true, ipfs_hash: "QmSn0w...h9i0" },
-];
-
-const MY_UPLOADS: Book[] = [
-  { id: "2", title: "Dune", author: "Frank Herbert", genre: "Sci-Fi", verified: true, ipfs_hash: "QmTaVxm...b3c1" },
-];
-
-const STATS = [
-  { label: "Total Books",      value: "12",  color: "#FFE500", icon: "📚" },
-  { label: "Verified On-Chain",value: "9",   color: "#00E061", icon: "✓" },
-  { label: "Books Borrowed",   value: "2",   color: "#0047FF", icon: "🔖" },
-  { label: "Your Uploads",     value: "1",   color: "#FF2E00", icon: "📤" },
-];
-
-const ACTIVITY = [
-  { action: "Uploaded",  book: "Dune",                 time: "2h ago",  tx: "a3b8d1...e6f7", color: "#FFE500" },
-  { action: "Borrowed",  book: "The Midnight Library", time: "1d ago",  tx: "b4c9e2...f7a8", color: "#0047FF" },
-  { action: "Borrowed",  book: "Snow Crash",           time: "3d ago",  tx: "c5dae3...g8b9", color: "#0047FF" },
-  { action: "Verified",  book: "Foundation",           time: "5d ago",  tx: "d6ebf4...h9c0", color: "#00E061" },
-];
 
 export default function DashboardPage() {
+  const { books, loading, error } = useContractBooks();
+
+  const STATS = [
+    { label: "Total Books",      value: books.length.toString(),  color: "#FFE500", icon: "📚" },
+    { label: "Verified On-Chain",value: books.filter(b => b.verified).length.toString(),   color: "#00E061", icon: "✓" },
+    { label: "Books Borrowed",   value: "2",   color: "#0047FF", icon: "🔖" },
+    { label: "Your Uploads",     value: books.length > 0 ? "1" : "0",   color: "#FF2E00", icon: "📤" },
+  ];
+
+  const ACTIVITY = [
+    { action: "Uploaded",  book: "Dune",                 time: "2h ago",  tx: "a3b8d1...e6f7", color: "#FFE500" },
+    { action: "Borrowed",  book: "The Midnight Library", time: "1d ago",  tx: "b4c9e2...f7a8", color: "#0047FF" },
+    { action: "Borrowed",  book: "Snow Crash",           time: "3d ago",  tx: "c5dae3...g8b9", color: "#0047FF" },
+    { action: "Verified",  book: "Foundation",           time: "5d ago",  tx: "d6ebf4...h9c0", color: "#00E061" },
+  ];
+
   return (
     <div className="min-h-screen bg-off-black pt-28 pb-20 px-6 md:px-16">
       {/* Header */}
@@ -81,9 +76,15 @@ export default function DashboardPage() {
               <Link href="/library" className="brut-btn brut-btn-yellow py-2 text-sm">Browse More</Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {BORROWED_BOOKS.map((book, i) => (
-                <BookCard key={book.id} book={book} index={i} />
-              ))}
+              {loading ? (
+                <p className="text-white">Loading...</p>
+              ) : books.length > 0 ? (
+                books.slice(0, 2).map((book, i) => (
+                  <BookCard key={book.id} book={book} index={i} />
+                ))
+              ) : (
+                <p className="text-gray-400">No books borrowed yet.</p>
+              )}
             </div>
           </section>
 
@@ -96,9 +97,15 @@ export default function DashboardPage() {
               <Link href="/upload" className="brut-btn brut-btn-white py-2 text-sm">+ Upload</Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {MY_UPLOADS.map((book, i) => (
-                <BookCard key={book.id} book={book} index={i} />
-              ))}
+              {loading ? (
+                <p className="text-white">Loading...</p>
+              ) : books.length > 0 ? (
+                books.map((book, i) => (
+                  <BookCard key={book.id} book={book} index={i} />
+                ))
+              ) : (
+                <p className="text-gray-400">No books uploaded yet.</p>
+              )}
             </div>
           </section>
         </div>
