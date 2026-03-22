@@ -21,7 +21,8 @@ export async function invokeContract(method: string, args: any) {
   // For now, we'll fetch from our backend which acts as a bridge or just return mock data
   // to show the "integration logic" is in place as requested.
   try {
-    const response = await fetch("http://localhost:4000/api/contract/invoke", {
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+    const response = await fetch(`${API_BASE}/api/contract/invoke`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ method, args }),

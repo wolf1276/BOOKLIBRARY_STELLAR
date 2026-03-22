@@ -23,7 +23,8 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
     setErrorMsg("");
     
     try {
-      const res = await fetch("http://localhost:4000/api/upload", {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+      const res = await fetch(`${API_BASE}/api/upload`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
