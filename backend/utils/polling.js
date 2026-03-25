@@ -9,7 +9,7 @@ const logger = winston.createLogger({
   transports: [new winston.transports.Console()],
 });
 
-export function startEventPolling(wss: WebSocketServer) {
+export function startEventPolling(wss) {
   setInterval(async () => {
     try {
       const events = await getEvents();
