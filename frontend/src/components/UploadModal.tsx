@@ -30,7 +30,7 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
 
     try {
       // ── Step 1: Upload to backend (IPFS + in-memory store) ──
-      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+      const API = process.env.NEXT_PUBLIC_API_URL || "https://booklibrary-stellar-1.onrender.com";
 
       let walletAddress = "unknown";
       try {
@@ -39,7 +39,7 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
         // Wallet not connected — proceed without it
       }
 
-      const res = await fetch(`${API_BASE}/api/upload`, {
+      const res = await fetch(`${API}/api/books/upload`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
