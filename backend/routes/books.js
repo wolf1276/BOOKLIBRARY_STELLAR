@@ -1,13 +1,13 @@
 import express from "express";
+import { getBook, CONTRACT_ID } from "../utils/stellar.js";
 
 const router = express.Router();
-
-const CONTRACT_ID = "CBYNK3NUXBOEWLQQHACBMTH7JLHV4PSNJ22VPSHK77MCZZZZOSC3PBJM";
 
 // In-memory store (replace with DB in production)
 export const books = [
   {
     book_id: "1",
+    contract_book_id: null,
     title: "The Midnight Library",
     author: "Matt Haig",
     genre: "Fiction",
@@ -18,6 +18,7 @@ export const books = [
   },
   {
     book_id: "2",
+    contract_book_id: null,
     title: "Dune",
     author: "Frank Herbert",
     genre: "Sci-Fi",
@@ -28,6 +29,7 @@ export const books = [
   },
   {
     book_id: "3",
+    contract_book_id: null,
     title: "Neuromancer",
     author: "William Gibson",
     genre: "Cyberpunk",
@@ -40,7 +42,7 @@ export const books = [
 
 /**
  * GET /api/books
- * Fetch all books
+ * Fetch all books (from in-memory store)
  */
 router.get("/", (req, res) => {
   const { genre, verified, search } = req.query;
@@ -70,31 +72,70 @@ router.get("/:id", (req, res) => {
 
 /**
  * GET /api/books/:id/verify
- * Verify a book's on-chain record
+ * Verify a book's on-chain record by querying the Soroban contract
  */
 router.get("/:id/verify", async (req, res) => {
   const book = books.find((b) => b.book_id === req.params.id);
   if (!book) return res.status(404).json({ error: "Book not found" });
 
-  // Stellar verification stub
-  // In production: query Soroban contract using stellar-sdk
   try {
-    const isOnChain = book.verified && !!book.ipfs_hash;
+    let onChainBook = null;
+    let isOnChain = false;
 
+    // If the book has a contract_book_id, verify it on-chain
+    if (book.contract_book_id) {
+      onChainBook = await getBook(book.contract_book_id);
+      if (onChainBook) {
+        isOnChain = true;
+        // Compare on-chain data with local data
+        const titleMatch = onChainBook.title === book.title;
+        const authorMatch = onChainBook.author === book.author;
+
+        res.json({
+          book_id: book.book_id,
+          contract_book_id: book.contract_book_id,
+          title: book.title,
+          verified: isOnChain,
+          on_chain_data: {
+            title: onChainBook.title,
+            author: onChainBook.author,
+            borrower: onChainBook.borrower || null,
+            title_match: titleMatch,
+            author_match: authorMatch,
+          },
+          contract: CONTRACT_ID,
+          network: "Stellar Testnet",
+          stellar_tx: book.stellar_tx || null,
+          stellar_explorer_url: book.stellar_tx
+            ? `https://stellar.expert/explorer/testnet/tx/${book.stellar_tx}`
+            : null,
+          ipfs_hash: book.ipfs_hash,
+          message: "✓ Record verified on Stellar Soroban contract",
+        });
+        return;
+      }
+    }
+
+    // No on-chain record found
     res.json({
       book_id: book.book_id,
       title: book.title,
-      verified: isOnChain,
+      verified: false,
+      on_chain_data: null,
       contract: CONTRACT_ID,
       network: "Stellar Testnet",
-      stellar_lab_url: `https://lab.stellar.org/r/testnet/contract/${CONTRACT_ID}`,
+      stellar_tx: book.stellar_tx || null,
       ipfs_hash: book.ipfs_hash,
-      message: isOnChain
-        ? "✓ Record found on Stellar Soroban contract"
-        : "✗ No verified on-chain record found",
+      message: "✗ No verified on-chain record found",
     });
   } catch (err) {
-    res.status(500).json({ error: "Stellar query failed", message: err.message });
+    console.error("Stellar verification error:", err.message);
+    res.status(500).json({
+      error: "Stellar verification failed",
+      message: err.message,
+      book_id: book.book_id,
+      verified: false,
+    });
   }
 });
 

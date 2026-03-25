@@ -1,14 +1,13 @@
 import express from "express";
 import crypto from "crypto";
 import { books } from "./books.js";
+import { addBook, CONTRACT_ID } from "../utils/stellar.js";
 
 const router = express.Router();
 
-const CONTRACT_ID = "CBYNK3NUXBOEWLQQHACBMTH7JLHV4PSNJ22VPSHK77MCZZZZOSC3PBJM";
-
 /**
  * POST /api/upload
- * Upload book metadata → IPFS stub → Stellar contract registration stub
+ * Upload book metadata → IPFS → Stellar Soroban contract registration
  *
  * Body: { title, author, genre, description, owner_wallet }
  */
@@ -20,30 +19,37 @@ router.post("/", async (req, res) => {
   }
 
   try {
-    // ── Step 1: Fake IPFS Upload ─────────────────────────────────────
-    // In production: use Pinata or web3.storage SDK
-    // const pinata = new PinataSDK({ pinataJwt: process.env.PINATA_JWT });
-    // const upload = await pinata.upload.json({ title, author, ... });
-    // const ipfs_hash = upload.IpfsHash;
-
-    const ipfsHash = "Qm" + crypto.randomBytes(22).toString("hex").slice(0, 44);
+    // ── Step 1: IPFS Upload (simulated — replace with Pinata/web3.storage) ──
+    // In production: const upload = await pinata.upload.json({ title, author, ... });
+    const contentHash = crypto
+      .createHash("sha256")
+      .update(JSON.stringify({ title, author, genre, description, timestamp: Date.now() }))
+      .digest("hex");
+    const ipfsHash = "Qm" + contentHash.slice(0, 44);
     console.log(`[IPFS] Simulated upload → ${ipfsHash}`);
 
-    // ── Step 2: Register on Stellar Soroban ─────────────────────────
-    // In production: use stellar-sdk to call add_book on the contract
-    // const server = new rpc.Server("https://soroban-testnet.stellar.org");
-    // const contract = new Contract(CONTRACT_ID);
-    // const tx = new TransactionBuilder(account, { fee: BASE_FEE, networkPassphrase: Networks.TESTNET })
-    //   .addOperation(contract.call("add_book", nativeToScVal(title, { type: "string" }), ...))
-    //   .setTimeout(30).build();
+    // ── Step 2: Register on Stellar Soroban (REAL contract call) ────────────
+    let stellarTxHash;
+    let contractBookId;
 
-    const stellarTxHash = crypto.randomBytes(32).toString("hex");
-    console.log(`[Stellar] Simulated TX → ${stellarTxHash}`);
+    try {
+      const result = await addBook(title, author);
+      stellarTxHash = result.txHash;
+      contractBookId = result.bookId;
+      console.log(`[Stellar] ✓ TX submitted → ${stellarTxHash} | Book ID: ${contractBookId}`);
+    } catch (stellarErr) {
+      console.error("[Stellar] Contract call failed:", stellarErr.message);
+      // If contract call fails (e.g., no secret key), still record the book
+      // but mark it as unverified
+      stellarTxHash = null;
+      contractBookId = null;
+    }
 
     const book_id = Date.now().toString();
 
     const newBook = {
       book_id,
+      contract_book_id: contractBookId, // on-chain ID for verification
       title,
       author,
       genre: genre || "Unknown",
@@ -51,15 +57,17 @@ router.post("/", async (req, res) => {
       ipfs_hash: ipfsHash,
       owner_wallet: owner_wallet || "unknown",
       timestamp: Math.floor(Date.now() / 1000),
-      verified: true,
+      verified: !!stellarTxHash,
       stellar_tx: stellarTxHash,
     };
 
     // Add to in-memory array so the Library page can see it
-    books.unshift(newBook); // prepend the new book
+    books.unshift(newBook);
 
     res.status(201).json({
-      message: "Book uploaded and registered on-chain (testnet)",
+      message: stellarTxHash
+        ? "Book uploaded and registered on-chain (testnet)"
+        : "Book uploaded but on-chain registration failed — marked as unverified",
       book: newBook,
       ipfs: {
         hash: ipfsHash,
@@ -67,9 +75,10 @@ router.post("/", async (req, res) => {
       },
       stellar: {
         tx_hash: stellarTxHash,
+        contract_book_id: contractBookId,
         contract: CONTRACT_ID,
         network: "Stellar Testnet",
-        explorer_url: `https://lab.stellar.org/r/testnet/contract/${CONTRACT_ID}`,
+        explorer_url: `https://stellar.expert/explorer/testnet/tx/${stellarTxHash}`,
       },
     });
   } catch (err) {

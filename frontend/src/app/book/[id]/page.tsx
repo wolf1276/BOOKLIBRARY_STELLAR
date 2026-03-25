@@ -6,7 +6,7 @@ import Link from "next/link";
 import VerificationBadge from "@/components/VerificationBadge";
 import WalletConnect from "@/components/WalletConnect";
 import BookCard, { Book } from "@/components/BookCard";
-import { invokeContract } from "@/utils/stellar";
+import { borrowBook } from "@/utils/stellar";
 
 const CONTRACT_ID = "CBYNK3NUXBOEWLQQHACBMTH7JLHV4PSNJ22VPSHK77MCZZZZOSC3PBJM";
 
@@ -24,14 +24,13 @@ export default function BookDetailPage() {
   useEffect(() => {
     async function fetchBookDetail() {
       try {
-        const result = await invokeContract("get_book", { book_id: id });
-        if (result) {
-          setBook({ ...result, id: result.book_id });
-        } else {
-          throw new Error("Book not found");
-        }
+        const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+        const res = await fetch(`${API_BASE}/api/books/${id}`);
+        if (!res.ok) throw new Error("Book not found");
+        const result = await res.json();
+        setBook({ ...result, id: result.book_id });
       } catch (err) {
-        console.error("Contract fetch error:", err);
+        console.error("Book fetch error:", err);
       } finally {
         setLoading(false);
       }
@@ -151,7 +150,21 @@ export default function BookDetailPage() {
           {/* Actions */}
           <div className="flex flex-wrap gap-4">
             <button className="brut-btn brut-btn-yellow text-base">📖 Read Book</button>
-            <button className="brut-btn brut-btn-blue text-base">🔖 Borrow</button>
+            <button
+              className="brut-btn brut-btn-blue text-base"
+              onClick={async () => {
+                try {
+                  const borrower = prompt("Enter borrower name (max 9 chars):");
+                  if (!borrower) return;
+                  const contractId = (book as any).contract_book_id;
+                  if (!contractId) { alert("This book has no on-chain ID."); return; }
+                  const result = await borrowBook(borrower.slice(0, 9), contractId);
+                  alert(`Book borrowed! TX: ${result.txHash}`);
+                } catch (err: any) {
+                  alert(`Borrow failed: ${err.message}`);
+                }
+              }}
+            >🔖 Borrow</button>
             <a
               href={`https://lab.stellar.org/r/testnet/contract/${CONTRACT_ID}`}
               target="_blank"

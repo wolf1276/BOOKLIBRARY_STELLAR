@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { addBook, ensureWalletConnected } from "@/utils/stellar";
 
 interface UploadModalProps {
   isOpen: boolean;
@@ -8,12 +9,17 @@ interface UploadModalProps {
 }
 
 export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
-  const [step, setStep] = useState<"form" | "uploading" | "success">("form");
+  const [step, setStep] = useState<"form" | "uploading" | "signing" | "success">("form");
   const [form, setForm] = useState({ title: "", author: "", genre: "", description: "" });
   const [file, setFile] = useState<File | null>(null);
 
   const [errorMsg, setErrorMsg] = useState("");
-  const [successData, setSuccessData] = useState<{ ipfs: string; tx: string } | null>(null);
+  const [successData, setSuccessData] = useState<{
+    ipfs: string;
+    tx: string;
+    contractBookId: number | null;
+    explorerUrl: string;
+  } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,9 +27,18 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
 
     setStep("uploading");
     setErrorMsg("");
-    
+
     try {
+      // ── Step 1: Upload to backend (IPFS + in-memory store) ──
       const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+
+      let walletAddress = "unknown";
+      try {
+        walletAddress = await ensureWalletConnected();
+      } catch {
+        // Wallet not connected — proceed without it
+      }
+
       const res = await fetch(`${API_BASE}/api/upload`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -32,19 +47,40 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
           author: form.author,
           genre: form.genre,
           description: form.description,
-          owner_wallet: "freighter-wallet-placeholder" // In real app, pass the actual connected wallet
-        })
+          owner_wallet: walletAddress,
+        }),
       });
 
       const data = await res.json();
-      
+
       if (!res.ok) {
         throw new Error(data.error || "Failed to upload to API");
       }
 
+      // ── Step 2: Register on-chain via Freighter wallet signing ──
+      setStep("signing");
+
+      let onChainTxHash = data.stellar?.tx_hash || null;
+      let contractBookId = data.stellar?.contract_book_id || null;
+
+      try {
+        // The user's wallet signs the add_book transaction
+        const result = await addBook(form.title, form.author);
+        onChainTxHash = result.txHash;
+        contractBookId = result.bookId;
+      } catch (walletErr: any) {
+        console.warn("On-chain registration via wallet failed:", walletErr.message);
+        // Backend may have already registered it server-side
+        // Continue with whatever the backend returned
+      }
+
       setSuccessData({
         ipfs: data.ipfs.hash,
-        tx: data.stellar.tx_hash
+        tx: onChainTxHash || "N/A",
+        contractBookId,
+        explorerUrl: onChainTxHash
+          ? `https://stellar.expert/explorer/testnet/tx/${onChainTxHash}`
+          : "",
       });
       setStep("success");
     } catch (err: any) {
@@ -77,7 +113,7 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
             onClick={handleClose}
           />
 
-          {/* Modal Container to fix centering and scrolling */}
+          {/* Modal Container */}
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 pointer-events-none">
             <motion.div
               key="modal"
@@ -95,7 +131,7 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
                 className="text-2xl font-black text-off-black uppercase"
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}
               >
-                {step === "success" ? "✓ Uploaded!" : "Upload Book"}
+                {step === "success" ? "✓ Uploaded!" : step === "signing" ? "🔐 Sign TX" : "Upload Book"}
               </h2>
               <button
                 onClick={handleClose}
@@ -168,7 +204,7 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
 
                   {/* IPFS Notice */}
                   <div className="bg-blue/10 border-2 border-blue p-3 text-xs text-blue font-bold" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-                    📡 File will be stored on IPFS → Hash saved to Stellar Soroban contract
+                    📡 File will be stored on IPFS → Hash saved to Stellar Soroban contract via Freighter wallet signing
                   </div>
 
                   {errorMsg && (
@@ -197,7 +233,7 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
                       Uploading to IPFS...
                     </p>
                     <p className="text-sm text-gray-500 mt-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-                      Then storing hash on Stellar blockchain
+                      Storing metadata on server
                     </p>
                   </div>
                   {[60, 35, 80].map((w, i) => (
@@ -210,6 +246,32 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
                       style={{ alignSelf: "flex-start" }}
                     />
                   ))}
+                </div>
+              )}
+
+              {/* STEP: signing — waiting for Freighter wallet */}
+              {step === "signing" && (
+                <div className="py-12 flex flex-col items-center gap-6">
+                  <motion.div
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="w-20 h-20 bg-blue border-4 border-off-black flex items-center justify-center text-4xl"
+                    style={{ boxShadow: "6px 6px 0px #0A0A0A" }}
+                  >
+                    🔐
+                  </motion.div>
+                  <div className="text-center">
+                    <p className="text-lg font-bold text-off-black" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                      Sign with Freighter
+                    </p>
+                    <p className="text-sm text-gray-500 mt-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                      Approve the transaction in your wallet to register the book on-chain
+                    </p>
+                  </div>
+
+                  <div className="bg-yellow/20 border-2 border-yellow p-3 text-xs text-off-black font-bold text-center" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                    ⚡ The Freighter popup should appear — check your browser extensions
+                  </div>
                 </div>
               )}
 
@@ -230,8 +292,24 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
                   </h3>
                   <div className="text-sm text-gray-600 space-y-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
                     <p>IPFS Hash: <span className="text-blue font-bold">{successData?.ipfs.slice(0, 16)}...</span></p>
-                    <p>Stellar TX: <span className="text-blue font-bold">{successData?.tx.slice(0, 16)}...</span></p>
+                    <p>Stellar TX: <span className="text-blue font-bold">{successData?.tx === "N/A" ? "N/A" : successData?.tx.slice(0, 16) + "..."}</span></p>
+                    {successData?.contractBookId && (
+                      <p>Contract Book ID: <span className="text-blue font-bold">#{successData.contractBookId}</span></p>
+                    )}
                   </div>
+
+                  {successData?.explorerUrl && (
+                    <a
+                      href={successData.explorerUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-blue underline font-bold hover:opacity-70"
+                      style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                    >
+                      View on Stellar Explorer →
+                    </a>
+                  )}
+
                   <button onClick={handleClose} className="brut-btn brut-btn-yellow">
                     Awesome! Close →
                   </button>
