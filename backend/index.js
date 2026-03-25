@@ -111,6 +111,6 @@ wss.on("connection", (ws) => {
 });
 
 // ─── Start Event Polling ──────────────────────────
-startEventPolling(wss);
+// startEventPolling(wss); // Temporarily disabled to prevent polling errors
 
 export { wss };
