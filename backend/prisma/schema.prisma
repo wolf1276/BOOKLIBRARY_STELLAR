@@ -1,0 +1,23 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Book {
+  id                Int      @id @default(autoincrement())
+  contract_book_id  Int?     @unique
+  title             String
+  author            String
+  genre             String?
+  ipfs_hash         String?
+  owner_wallet      String
+  timestamp         DateTime @default(now())
+  verified          Boolean  @default(false)
+}

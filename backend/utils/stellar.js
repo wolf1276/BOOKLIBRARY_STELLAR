@@ -202,6 +202,31 @@ export async function returnBook(id) {
 }
 
 /**
+ * Get recent events from the contract
+ * @returns {Array} list of events
+ */
+export async function getEvents() {
+  const events = await server.getEvents({
+    startLedger: 1,
+    filters: [
+      {
+        contractIds: [CONTRACT_ID],
+        topics: [
+          ["*", "book_add"],
+          ["*", "book_brw"],
+          ["*", "book_ret"],
+        ],
+      },
+    ],
+    limit: 10,
+  });
+  return events.events.map(event => ({
+    event: event.topic[1].value().toString(),
+    data: event.data,
+  }));
+}
+
+/**
  * Prepare a transaction XDR for frontend signing (for Freighter).
  * Builds, simulates, but does NOT sign — returns XDR for the frontend.
  *

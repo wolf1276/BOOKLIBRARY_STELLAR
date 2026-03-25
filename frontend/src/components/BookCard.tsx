@@ -80,7 +80,7 @@ export default function BookCard({ book, index = 0 }: { book: Book; index?: numb
             : "6px 6px 0px #0A0A0A",
         }}
         transition={{ duration: 0.2 }}
-        className="border-4 border-off-black bg-white cursor-pointer overflow-hidden"
+        className="border-4 border-off-black bg-white cursor-pointer overflow-hidden w-full max-w-xs mx-auto md:max-w-none"
       >
         <Link href={`/book/${book.id}`} className="no-underline block">
           {/* Book Cover */}

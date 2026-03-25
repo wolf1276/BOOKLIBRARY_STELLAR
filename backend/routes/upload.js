@@ -1,9 +1,19 @@
 import express from "express";
 import crypto from "crypto";
-import { books } from "./books.js";
+import { z } from "zod";
+import { prisma } from "../index.js";
 import { addBook, CONTRACT_ID } from "../utils/stellar.js";
 
 const router = express.Router();
+
+// Validation schema
+const uploadSchema = z.object({
+  title: z.string().min(1),
+  author: z.string().min(1),
+  genre: z.string().optional(),
+  description: z.string().optional(),
+  owner_wallet: z.string().optional(),
+});
 
 /**
  * POST /api/upload
@@ -12,57 +22,42 @@ const router = express.Router();
  * Body: { title, author, genre, description, owner_wallet }
  */
 router.post("/", async (req, res) => {
-  const { title, author, genre, description, owner_wallet } = req.body;
-
-  if (!title || !author) {
-    return res.status(400).json({ error: "title and author are required" });
-  }
-
   try {
+    const data = uploadSchema.parse(req.body);
+
     // ── Step 1: IPFS Upload (simulated — replace with Pinata/web3.storage) ──
-    // In production: const upload = await pinata.upload.json({ title, author, ... });
     const contentHash = crypto
       .createHash("sha256")
-      .update(JSON.stringify({ title, author, genre, description, timestamp: Date.now() }))
+      .update(JSON.stringify({ ...data, timestamp: Date.now() }))
       .digest("hex");
     const ipfsHash = "Qm" + contentHash.slice(0, 44);
-    console.log(`[IPFS] Simulated upload → ${ipfsHash}`);
 
     // ── Step 2: Register on Stellar Soroban (REAL contract call) ────────────
     let stellarTxHash;
     let contractBookId;
 
     try {
-      const result = await addBook(title, author);
+      const result = await addBook(data.title, data.author);
       stellarTxHash = result.txHash;
       contractBookId = result.bookId;
-      console.log(`[Stellar] ✓ TX submitted → ${stellarTxHash} | Book ID: ${contractBookId}`);
     } catch (stellarErr) {
       console.error("[Stellar] Contract call failed:", stellarErr.message);
-      // If contract call fails (e.g., no secret key), still record the book
-      // but mark it as unverified
       stellarTxHash = null;
       contractBookId = null;
     }
 
-    const book_id = Date.now().toString();
-
-    const newBook = {
-      book_id,
-      contract_book_id: contractBookId, // on-chain ID for verification
-      title,
-      author,
-      genre: genre || "Unknown",
-      description: description || "",
-      ipfs_hash: ipfsHash,
-      owner_wallet: owner_wallet || "unknown",
-      timestamp: Math.floor(Date.now() / 1000),
-      verified: !!stellarTxHash,
-      stellar_tx: stellarTxHash,
-    };
-
-    // Add to in-memory array so the Library page can see it
-    books.unshift(newBook);
+    // ── Step 3: Save to database ───────────────────────────────────────────
+    const newBook = await prisma.book.create({
+      data: {
+        contract_book_id: contractBookId,
+        title: data.title,
+        author: data.author,
+        genre: data.genre,
+        ipfs_hash: ipfsHash,
+        owner_wallet: data.owner_wallet || "unknown",
+        verified: !!stellarTxHash,
+      },
+    });
 
     res.status(201).json({
       message: stellarTxHash
@@ -78,7 +73,7 @@ router.post("/", async (req, res) => {
         contract_book_id: contractBookId,
         contract: CONTRACT_ID,
         network: "Stellar Testnet",
-        explorer_url: `https://stellar.expert/explorer/testnet/tx/${stellarTxHash}`,
+        explorer_url: stellarTxHash ? `https://stellar.expert/explorer/testnet/tx/${stellarTxHash}` : null,
       },
     });
   } catch (err) {

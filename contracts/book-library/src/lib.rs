@@ -30,6 +30,7 @@ pub enum Error {
     AlreadyBorrowed = 5,
     NotBorrowed = 6,
     NotBorrower = 7,
+    InsufficientBalance = 8,
 }
 
 // ─── Storage Keys ──────────────────────────────────────────
@@ -146,6 +147,13 @@ impl BookLibrary {
         let deposit: i128 = env.storage().instance().get(&DEPOSIT)
             .ok_or(Error::NotInitialized)?;
         let token_client = token::Client::new(&env, &token_addr);
+
+        // Check borrower balance before transfer
+        let borrower_balance = token_client.balance(&borrower);
+        if borrower_balance < deposit {
+            return Err(Error::InsufficientBalance);
+        }
+
         token_client.transfer(&borrower, &env.current_contract_address(), &deposit);
 
         book.borrower = Some(borrower.clone());
@@ -186,6 +194,13 @@ impl BookLibrary {
         let deposit: i128 = env.storage().instance().get(&DEPOSIT)
             .ok_or(Error::NotInitialized)?;
         let token_client = token::Client::new(&env, &token_addr);
+
+        // Check contract balance before transfer
+        let contract_balance = token_client.balance(&env.current_contract_address());
+        if contract_balance < deposit {
+            return Err(Error::InsufficientBalance);
+        }
+
         token_client.transfer(&env.current_contract_address(), &caller, &deposit);
 
         book.borrower = None;
