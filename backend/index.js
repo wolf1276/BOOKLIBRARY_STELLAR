@@ -7,7 +7,6 @@ import { PrismaClient } from "@prisma/client";
 import "dotenv/config";
 import { startEventPolling } from "./utils/polling.js";
 import booksRouter from "./routes/books.js";
-import uploadRouter from "./routes/upload.js";
 import contractRouter from "./routes/contract.js";
 
 const app = express();
@@ -61,8 +60,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ─── Routes ───────────────────────────────────────
-app.use("/api/books",  booksRouter);
-app.use("/api/upload", uploadRouter);
+app.use("/api/books", booksRouter);
 app.use("/api/contract", contractRouter);
 
 // ─── Health Check ─────────────────────────────────
