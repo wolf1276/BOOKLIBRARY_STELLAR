@@ -1,6 +1,6 @@
-import { Server as WebSocketServer } from "ws";
-import { getEvents, CONTRACT_ID } from "./utils/stellar.js";
-import { prisma } from "./index.js";
+import { WebSocketServer } from "ws";
+import { getEvents, CONTRACT_ID } from "./stellar.js";
+import { prisma } from "../index.js";
 import winston from "winston";
 
 const logger = winston.createLogger({

@@ -37,18 +37,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-  if (genre) result = result.filter((b) => b.genre?.toLowerCase() === genre.toLowerCase());
-  if (verified === "true") result = result.filter((b) => b.verified);
-  if (search) {
-    const q = search.toLowerCase();
-    result = result.filter(
-      (b) => b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q)
-    );
-  }
-
-  res.json({ count: result.length, books: result });
-});
-
 /**
  * GET /api/books/:id
  * Fetch a single book by ID
@@ -121,35 +109,6 @@ router.get("/:id/verify", async (req, res) => {
     }
   } catch (err) {
     res.status(500).json({ error: err.message });
-  }
-});
-          ipfs_hash: book.ipfs_hash,
-          message: "✓ Record verified on Stellar Soroban contract",
-        });
-        return;
-      }
-    }
-
-    // No on-chain record found
-    res.json({
-      book_id: book.book_id,
-      title: book.title,
-      verified: false,
-      on_chain_data: null,
-      contract: CONTRACT_ID,
-      network: "Stellar Testnet",
-      stellar_tx: book.stellar_tx || null,
-      ipfs_hash: book.ipfs_hash,
-      message: "✗ No verified on-chain record found",
-    });
-  } catch (err) {
-    console.error("Stellar verification error:", err.message);
-    res.status(500).json({
-      error: "Stellar verification failed",
-      message: err.message,
-      book_id: book.book_id,
-      verified: false,
-    });
   }
 });
 

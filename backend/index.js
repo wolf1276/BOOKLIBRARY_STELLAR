@@ -4,13 +4,11 @@ import rateLimit from "express-rate-limit";
 import winston from "winston";
 import { WebSocketServer } from "ws";
 import { PrismaClient } from "@prisma/client";
-import dotenv from "dotenv";
+import "dotenv/config";
 import { startEventPolling } from "./utils/polling.js";
 import booksRouter from "./routes/books.js";
 import uploadRouter from "./routes/upload.js";
 import contractRouter from "./routes/contract.js";
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
