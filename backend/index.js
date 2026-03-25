@@ -14,7 +14,28 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 const WS_PORT = process.env.WS_PORT || 4001;
 
-export const prisma = new PrismaClient();
+if (!process.env.DATABASE_URL) {
+  console.error("FATAL: DATABASE_URL environment variable is required");
+  process.exit(1);
+}
+if (!process.env.STELLAR_SECRET_KEY) {
+  console.error("FATAL: STELLAR_SECRET_KEY environment variable is required");
+  process.exit(1);
+}
+if (!process.env.CONTRACT_ID) {
+  console.error("FATAL: CONTRACT_ID environment variable is required");
+  process.exit(1);
+}
+
+let prisma;
+try {
+  prisma = new PrismaClient();
+} catch (err) {
+  console.error("PrismaClient initialization failed:", err);
+  process.exit(1);
+}
+
+export { prisma };
 
 // ─── Logging ──────────────────────────────────────
 const logger = winston.createLogger({

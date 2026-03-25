@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
+    "postinstall": "prisma generate",
     "test": "echo 'No tests yet'",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
