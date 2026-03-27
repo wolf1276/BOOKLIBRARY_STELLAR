@@ -29,8 +29,9 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
     setErrorMsg("");
 
     try {
-      // ── Step 1: Upload to backend (IPFS + in-memory store) ──
-      const API = process.env.NEXT_PUBLIC_API_URL || "https://booklibrary-stellar-1.onrender.com";
+      // ── Step 1: Upload to API (IPFS + database) ──
+      const API = process.env.NEXT_PUBLIC_API_URL || "";
+      const uploadEndpoint = API ? `${API}/api/books` : "/api/books";
 
       let walletAddress = "unknown";
       try {
@@ -39,7 +40,7 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
         // Wallet not connected — proceed without it
       }
 
-      const res = await fetch(`${API}/api/books/upload`, {
+      const res = await fetch(uploadEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

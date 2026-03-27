@@ -24,11 +24,12 @@ export default function BookDetailPage() {
   useEffect(() => {
     async function fetchBookDetail() {
       try {
-        const API = process.env.NEXT_PUBLIC_API_URL || "https://booklibrary-stellar-1.onrender.com";
-        const res = await fetch(`${API}/api/books/${id}`);
+        const API = process.env.NEXT_PUBLIC_API_URL || "";
+        const endpoint = API ? `${API}/api/books/${id}` : `/api/books/${id}`;
+        const res = await fetch(endpoint);
         if (!res.ok) throw new Error("Book not found");
         const result = await res.json();
-        setBook({ ...result, id: result.book_id });
+        setBook({ ...result, id: String(result.id) });
       } catch (err) {
         console.error("Book fetch error:", err);
       } finally {

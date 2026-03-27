@@ -3,9 +3,18 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import UploadModal from "@/components/UploadModal";
 import WalletConnect from "@/components/WalletConnect";
+import { useContractBooks } from "@/app/hooks/useContractBooks";
 
 export default function UploadPage() {
   const [modalOpen, setModalOpen] = useState(false);
+  const { refetch } = useContractBooks();
+
+  const handleUploadClose = async () => {
+    setModalOpen(false);
+    // Refetch books from the library after upload completes
+    await new Promise(r => setTimeout(r, 500)); // Small delay for DB consistency
+    refetch();
+  };
 
   return (
     <div className="min-h-screen bg-off-black pt-28 pb-20 px-6 md:px-16">
@@ -125,7 +134,7 @@ export default function UploadPage() {
         </div>
       </div>
 
-      <UploadModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+      <UploadModal isOpen={modalOpen} onClose={handleUploadClose} />
     </div>
   );
 }

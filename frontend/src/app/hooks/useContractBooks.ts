@@ -24,8 +24,11 @@ export function useContractBooks() {
   const fetchBooks = async () => {
     try {
       setLoading(true);
-      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-      const res = await fetch(`${API_BASE}/api/books`);
+      // Use relative path for same-origin API calls (works on Vercel and localhost)
+      // Or fall back to explicit URL if provided
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
+      const endpoint = API_BASE ? `${API_BASE}/api/books` : "/api/books";
+      const res = await fetch(endpoint);
 
       if (!res.ok) {
         throw new Error(`API returned ${res.status}`);
@@ -35,7 +38,7 @@ export function useContractBooks() {
 
       // Map backend book format to frontend Book interface
       const mapped: Book[] = (data.books || []).map((b: any) => ({
-        id: b.book_id,
+        id: String(b.id),
         title: b.title,
         author: b.author,
         genre: b.genre || "Unknown",
