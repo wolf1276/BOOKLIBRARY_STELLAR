@@ -2,6 +2,10 @@
 // POST /api/contract/borrow - Borrow a book on-chain
 
 import { NextRequest, NextResponse } from "next/server";
+
+// Force dynamic rendering for this API route
+export const dynamic = "force-dynamic";
+
 import { borrowBook } from "@/lib/stellar";
 
 export async function POST(request: NextRequest) {

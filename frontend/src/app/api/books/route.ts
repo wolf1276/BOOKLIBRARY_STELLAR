@@ -3,6 +3,10 @@
 // POST /api/books - Upload new book (calls add_book on contract)
 
 import { NextRequest, NextResponse } from "next/server";
+
+// Force dynamic rendering for this API route
+export const dynamic = "force-dynamic";
+
 import { prisma } from "@/lib/prisma";
 import { addBook, CONTRACT_ID } from "@/lib/stellar";
 import { z } from "zod";

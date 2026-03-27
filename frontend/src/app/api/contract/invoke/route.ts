@@ -2,6 +2,10 @@
 // POST /api/contract/invoke - General-purpose contract invocation
 
 import { NextRequest, NextResponse } from "next/server";
+
+// Force dynamic rendering for this API route
+export const dynamic = "force-dynamic";
+
 import { getBook, borrowBook, returnBook } from "@/lib/stellar";
 
 export async function POST(request: NextRequest) {

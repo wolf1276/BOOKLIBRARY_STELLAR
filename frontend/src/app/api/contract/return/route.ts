@@ -2,6 +2,10 @@
 // POST /api/contract/return - Return a book on-chain
 
 import { NextRequest, NextResponse } from "next/server";
+
+// Force dynamic rendering for this API route
+export const dynamic = "force-dynamic";
+
 import { returnBook } from "@/lib/stellar";
 
 export async function POST(request: NextRequest) {

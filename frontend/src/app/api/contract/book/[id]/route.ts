@@ -4,6 +4,9 @@
 import { NextResponse } from "next/server";
 import { getBook, CONTRACT_ID } from "@/lib/stellar";
 
+// Force dynamic rendering for this API route
+export const dynamic = "force-dynamic";
+
 interface Params {
   id: string;
 }

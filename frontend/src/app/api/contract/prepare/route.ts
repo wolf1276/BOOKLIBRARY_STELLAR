@@ -2,6 +2,10 @@
 // POST /api/contract/prepare - Prepare transaction XDR for frontend signing
 
 import { NextRequest, NextResponse } from "next/server";
+
+// Force dynamic rendering for this API route
+export const dynamic = "force-dynamic";
+
 import { prepareTransaction, NETWORK_PASSPHRASE } from "@/lib/stellar";
 import { nativeToScVal } from "@stellar/stellar-sdk";
 

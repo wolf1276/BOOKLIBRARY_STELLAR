@@ -2,6 +2,10 @@
 // GET /api/contract/info - Return contract metadata
 
 import { NextResponse } from "next/server";
+
+// Force dynamic rendering for this API route
+export const dynamic = "force-dynamic";
+
 import { CONTRACT_ID, RPC_URL, NETWORK_PASSPHRASE } from "@/lib/stellar";
 
 export async function GET() {
