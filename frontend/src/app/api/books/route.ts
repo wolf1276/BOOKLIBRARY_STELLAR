@@ -60,6 +60,15 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if DATABASE_URL is set
+    if (!process.env.DATABASE_URL) {
+      console.error("DATABASE_URL not configured");
+      return NextResponse.json(
+        { error: "Database not configured on this server. Please check Vercel environment variables." },
+        { status: 500 }
+      );
+    }
+
     const body = await request.json();
     const data = uploadSchema.parse(body);
 
