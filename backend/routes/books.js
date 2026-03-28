@@ -122,14 +122,23 @@ router.get("/:id/verify", async (req, res) => {
 });
 
 /**
+ * POST /api/books
+ * Alias for /api/books/upload to match frontend expectations
+ */
+router.post("/", async (req, res) => {
+  return await handleUpload(req, res);
+});
+
+/**
  * POST /api/books/upload
  * Upload book metadata → IPFS → Stellar Soroban contract registration
  *
  * Body: { title, author, genre, description, owner_wallet }
  */
-router.post("/upload", async (req, res) => {
+const handleUpload = async (req, res) => {
   try {
-    const data = uploadSchema.parse(req.body);
+    const body = req.body;
+    const data = uploadSchema.parse(body);
 
     // ── Step 1: IPFS Upload (simulated — replace with Pinata/web3.storage) ──
     const contentHash = crypto
