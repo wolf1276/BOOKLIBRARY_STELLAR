@@ -195,6 +195,8 @@ const handleUpload = async (req, res) => {
     console.error("Upload error:", err);
     res.status(500).json({ error: "Upload failed", message: err.message });
   }
-});
+};
+
+router.post("/upload", handleUpload);
 
 export default router;
