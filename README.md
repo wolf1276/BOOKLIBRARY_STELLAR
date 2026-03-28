@@ -1,230 +1,164 @@
 # 📚 BookLibrary Stellar
 
-**A decentralized, on-chain library management system built on Stellar Soroban.** Register, borrow, and manage books with blockchain-backed security and immutable records.
+![BookLibrary Stellar Hero](./image.png)
 
-### 🚀 [Live dApp](https://booklibrary-stellar.vercel.app)
+**A decentralized, on-chain library management system built on Stellar Soroban.** Register, borrow, and manage books with blockchain-backed security and immutable records, fully optimized for serverless performance on Vercel.
+
+### 🚀 [Live Global dApp](https://booklibrary-stellar.vercel.app)
+
+[![Stellar](https://img.shields.io/badge/Blockchain-Stellar%20Soroban-black?style=for-the-badge&logo=stellar)](https://stellar.org)
+[![Next.js](https://img.shields.io/badge/Framework-Next.js%2014-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
+[![Vercel](https://img.shields.io/badge/Deployment-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 ---
 
-## ✨ Features
+## ✨ Core Features
 
-- **📖 Book Registration** — Register books on-chain with metadata and IPFS hashes
-- **🔐 Wallet Integration** — Seamless Freighter wallet connection for authentication
-- **⛓️ On-Chain Borrowing** — Borrow and return books with smart contract enforcement
-- **💾 Permanent Records** — All transactions anchored on the Stellar testnet
-- **🔄 Real-Time Updates** — WebSocket support for live library state changes
-- **🎨 Modern UI** — Animated interface with Three.js visualization and smooth interactions
+- **📖 On-Chain Registration** — Metadata and IPFS content hashes are permanently anchored to the Stellar ledger.
+- **🔐 Wallet-First Identity** — Secure authentication and signing via the **Freighter** wallet.
+- **⛓️ Trustless Borrowing** — Smart contract-enforced borrowing logic with automatic status tracking.
+- **⚡ Serverless Architecture** — Blazing fast API interactions via Vercel Edge-optimized functions.
+- **🎨 Brutalist Aesthetics** — A high-contrast, animated interface built with **Three.js** and **Framer Motion**.
+- **💾 Hybrid Storage** — Metadata in Neon Postgres for speed, and on-chain Soroban storage for truth.
 
-## 🏗️ Tech Stack
+---
 
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| **Frontend** | Next.js 14, TypeScript, TailwindCSS, Three.js | Responsive dApp interface |
-| **Backend** | Express.js, Prisma, PostgreSQL/SQLite | Contract bridge & data management |
-| **Smart Contract** | Rust, Soroban SDK | On-chain book logic |
-| **Blockchain** | Stellar Soroban (Testnet) | Immutable book records |
-| **Wallet** | Freighter API | User authentication |
+## 🏗️ Technical Architecture
 
-## 📁 Project Structure
+This project is now a **unified monorepo** where the frontend and backend live together as a single Next.js application, making deployment effortless.
 
-```
+| Layer | Technology | Role |
+|-------|-----------|------|
+| **Primary** | `frontend/` | Next.js 14 Web Application & API Routes |
+| **Logic** | `contracts/` | Rust-based Soroban Smart Contract |
+| **DB** | Prisma + Neon | Metadata caching & user-facing library data |
+| **Auth** | Freighter Wallet | Transaction signing and identity |
+
+### 📁 Directory Map
+
+```text
 .
-├── contracts/
-│   └── book-library/              # Smart contract (Rust + Soroban)
-│       ├── src/
-│       │   ├── lib.rs             # Core contract logic
-│       │   └── test.rs            # Contract unit tests
-│       └── Cargo.toml
-│
-├── backend/                       # Express.js API server
-│   ├── routes/
-│   │   ├── books.js              # Book endpoints
-│   │   ├── contract.js           # Smart contract bridge
-│   │   └── upload.js             # File upload handling
-│   ├── utils/
-│   │   ├── stellar.js            # Stellar SDK utilities
-│   │   └── polling.js            # Event polling
-│   ├── prisma/
-│   │   └── schema.prisma         # Database schema
-│   ├── index.js                  # Server entry point
-│   ├── package.json
-│   └── .env.example
-│
-├── frontend/                      # Next.js 14 dApp
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── page.tsx          # Home page
-│   │   │   ├── library/          # Library view
-│   │   │   ├── book/[id]/        # Book details
-│   │   │   ├── dashboard/        # User dashboard
-│   │   │   └── upload/           # Book upload
-│   │   ├── components/           # UI components
-│   │   ├── hooks/                # Custom React hooks
-│   │   └── utils/                # Client utilities
-│   ├── package.json
-│   └── tailwind.config.ts
-│
-├── Cargo.toml                    # Workspace config
-└── README.md
+├── contracts/               # 🛡️ Smart Contract (Soroban/Rust)
+│   └── book-library/        # Core business logic for on-chain books
+├── frontend/                # 🌐 Unified Web App & API (Next.js)
+│   ├── src/app/api/         # ⚡ Serverless API routes (formerly Express backend)
+│   ├── src/lib/             # 🛠️ Shared SDK utilities & Prisma singleton
+│   ├── src/utils/           # 🔌 Client-side blockchain helpers
+│   └── prisma/              # 🗄️ Database schema definitions
+└── MIGRATION_SUMMARY.md     # 📝 Technical details of the Vercel migration
 ```
 
-## 🚀 Quick Start
+---
 
-### Prerequisites
-- Node.js 18+ & npm/yarn
-- Rust 1.70+
-- Soroban CLI
-- Freighter wallet extension
+## 🚀 One-Click Quick Start
 
-### Installation
+### 1. Prerequisites
+- [Freighter Wallet](https://www.freighter.app/) (Network: Testnet)
+- Node.js 18+
+- [Soroban CLI](https://soroban.stellar.org/docs/getting-started/setup)
 
+### 2. Implementation
 ```bash
-# Clone repository
-git clone <repository-url>
-cd BOOKLIBRARY_STELLAR
+# Register & install
+git clone https://github.com/wolf1276/BOOKLIBRARY_STELLAR.git
+cd BOOKLIBRARY_STELLAR/frontend
+npm install
 
-# Install all dependencies
-npm install              # Frontend
-cd backend && npm install && cd ..
-cd contracts/book-library && cargo build && cd ../..
+# Setup Database & Contract
+npx prisma generate
+cp .env.local.example .env.local
+# Add your DATABASE_URL, STELLAR_SECRET_KEY, and CONTRACT_ID to .env.local
 ```
 
-### Configuration
-
-**Backend (.env)**
-```env
-DATABASE_URL=postgresql://user:password@localhost:5432/booklibrary
-STELLAR_SECRET_KEY=your-stellar-private-key
-CONTRACT_ID=your-soroban-contract-id
-PORT=4000
-WS_PORT=4001
-```
-
-**Frontend (.env.local)**
-```env
-NEXT_PUBLIC_API_URL=http://localhost:4000
-NEXT_PUBLIC_WS_URL=ws://localhost:4001
-NEXT_PUBLIC_CONTRACT_ID=your-contract-id
-NEXT_PUBLIC_NETWORK=testnet
-```
-
-### Development
-
+### 3. Launch
 ```bash
-# Terminal 1: Start backend
-cd backend
-npm run db:push           # Set up database
-npm start                 # Port 4000
-
-# Terminal 2: Start frontend
-cd frontend
-npm run dev               # Port 3000
-
-# Terminal 3: Deploy/build contract (optional)
-cd contracts/book-library
-soroban contract build
-cargo test -p book-library
+npm run dev
 ```
+Visit `http://localhost:3000` to interact with your local environment.
 
-Visit `http://localhost:3000` in your browser.
+---
 
-## 📦 Smart Contract
+## 📦 Smart Contract Specifications
 
-The Soroban smart contract manages:
-- Book metadata storage
-- Borrowing mechanics and deposit system
-- Access control for operations
-- Event emission for tracking changes
+Current contract deployed on **Stellar Testnet**:
+`CBYNK3NUXBOEWLQQHACBMTH7JLHV4PSNJ22VPSHK77MCZZZZOSC3PBJM`
 
-**Core Functions:**
-- `initialize()` — Set up contract with admin and token
-- `add_book()` — Register a new book
-- `borrow_book()` — Borrow a book (requires deposit)
-- `return_book()` — Return borrowed book (refund deposit)
-- `get_books()` — Fetch all books
+### Available Functions
+| Method | Description | Parameters |
+|--------|-------------|------------|
+| `add_book` | Register new book | `caller: Address, title: String, author: String` |
+| `borrow_book` | Start borrow | `borrower: Address, id: u32` |
+| `return_book` | Return book | `caller: Address, id: u32` |
+| `get_book` | Single query | `id: u32` |
 
-## 🔗 Deployment
+---
 
-### Smart Contract
-```bash
-cd contracts/book-library
-soroban contract build --release
-soroban contract deploy \
-  --source <account-id> \
-  --wasm target/wasm32-unknown-unknown/release/book_library.wasm
-```
+## 🔌 API Reference (Serverless)
 
-### Frontend
-The frontend is deployed on Vercel. Push to `main` branch to auto-deploy.
+All endpoints are now same-origin relative paths within the Vercel app:
 
-```bash
-# Build locally
-cd frontend
-npm run build
-npm run start
-```
+- `GET /api/books` — Fetch library listing
+- `POST /api/books` — Upload metadata & trigger on-chain check
+- `GET /api/books/[id]?verify=true` — Verify on-chain provenance
+- `POST /api/contract/prepare` — Generate XDR for wallet signing
 
-### Backend
-Deploy to your preferred platform (Railway, Render, AWS, etc.):
+---
 
-```bash
-# Build & deploy
-cd backend
-npm run db:migrate
-npm run build  # or npm start
-```
+## 🛠️ Recent Fixes & Maintenance
 
-## 📚 API Endpoints
+As of **March 2026**, the following critical updates were applied:
+- **API Matching**: Corrected 404 errors by aligning frontend upload logic with root API handlers.
+- **Type Correction**: Fixed `Address` vs `Symbol` mismatches in borrow/return cycles.
+- **Contract Signatures**: Updated all JS/TS helpers to match the 3-argument signature (`caller, title, author`) required by the Soroban contract.
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/books` | Fetch all books |
-| `POST` | `/api/books` | Register new book |
-| `GET` | `/api/books/:id` | Get book details |
-| `POST` | `/api/books/:id/borrow` | Borrow book |
-| `POST` | `/api/books/:id/return` | Return book |
-| `POST` | `/api/contract/call` | Execute contract function |
-| `POST` | `/api/upload` | Upload file to IPFS |
-
-## 🧪 Testing
-
-```bash
-# Test smart contract
-cd contracts/book-library
-cargo test
-
-# Test backend (when implemented)
-cd ../../backend
-npm test
-
-# Test frontend (when implemented)
-cd ../frontend
-npm test
-```
-
-## 🐛 Troubleshooting
-
-**WebSocket connection fails:**
-- Ensure backend WS_PORT (4001) is accessible
-- Check CORS settings in backend
-
-**Contract not found:**
-- Verify CONTRACT_ID environment variable
-- Ensure contract is deployed to the same network
-
-**Wallet connection issues:**
-- Install Freighter extension
-- Switch to Testnet in Freighter
-- Clear browser cache if needed
-
-## 📖 Documentation
-
-- [Stellar Soroban Docs](https://soroban.stellar.org/)
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Express.js Guide](https://expressjs.com/)
-- [Freighter Wallet API](https://developers.stellar.org/docs/building-apps/wallet/freighter)
+---
 
 ## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## 🛠️ Advanced Production Readiness (Level: Pro)
+
+This application has been upgraded with production-grade patterns used by enterprise-level dApps on Stellar.
+
+### ⛓️ Inter-Contract Architecture
+The `BookLibrary` contract no longer stores value directly. It communicates with a separate **Stellar Asset Contract (SAC)** to handle deposits and refunds securely.
+- **Logic Separation**: The library contract manages book state; the token contract manages balances.
+- **Trustless Escrow**: Deposits are securely held by the contract address and only released upon successful return of the book.
+
+### 📡 Real-Time Event Streaming
+We've implemented a custom **Soroban RPC Event Listener** (`src/scripts/listener.ts`) that polls the ledger every 5 seconds for specifically filtered contract topics:
+- `init`: Captures contract initialization.
+- `book_add`: Real-time library growth tracking.
+- `book_brw`: Instant borrowing notifications.
+- `book_ret`: Automated deposit refund verification.
+
+### ⚙️ CI/CD Pipeline (GitHub Actions)
+Fully automated validation prevents breaking changes from reaching production:
+- **Contract Guard**: Every PR triggers a full `cargo test` suite on a fresh Rust/WASM environment.
+- **Frontend Guard**: Automated building, linting, and Prisma schema generation to ensure serverless compatibility.
+- **Branch Protection**: Merges only allowed after all tests pass.
+
+### 📱 Mobile-First Responsive Design
+Built with a "Touch-First" philosophy:
+- **Responsive Layouts**: Flexible grid systems and dynamic font scaling for mobile, tablet, and desktop.
+- **Wallet Compatibility**: Optimized for mobile wallet interactions (Freighter Mobile).
+- **Brutalist UI**: High contrast and bold elements designed for readability on any screen size.
+
+---
+
+## 🛤️ How I Built This (The Developer Journey)
+
+Achieving this required a systematic, 4-phase transformation:
+
+1.  **Contract Refactoring**: Migrated the library contract from a standalone structure to a multi-contract paradigm, integrating `soroban_sdk::token` for value transfers.
+2.  **Infrastructure Automation**: Configured a `main.yml` workflow using `dtolnay/rust-toolchain` and `actions/setup-node` to automate the entire testing/build pipeline.
+3.  **Real-Time Persistence**: Designed a polling-based events consumer that parses XDR topic data into human-readable JSON, bridging the gap between blockchain and local databases.
+4.  **Aesthetic Hardening**: Refined the CSS design tokens to support variable screen widths while maintaining the signature brutalist identity.
+
+---
+*Developed as part of the Stellar global developer ecosystem. Powered by Soroban.*
 
 MIT License - See LICENSE file for details
 
