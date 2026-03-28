@@ -164,18 +164,17 @@ export async function getBook(id) {
 
 /**
  * Borrow a book on-chain (server-side signed).
- * Calls `borrow_book(borrower: Symbol, id: u32)`
+ * Calls `borrow_book(borrower: Address, id: u32)`
  *
- * @param {string} borrowerSymbol - short symbol string (max 9 chars)
  * @param {number} id
  * @returns {{ txHash: string }}
  */
-export async function borrowBook(borrowerSymbol, id) {
+export async function borrowBook(id) {
   const keypair = getServerKeypair();
 
   const operation = contract.call(
     "borrow_book",
-    nativeToScVal(borrowerSymbol, { type: "symbol" }),
+    nativeToScVal(keypair.publicKey(), { type: "address" }),
     nativeToScVal(id, { type: "u32" })
   );
 
@@ -185,7 +184,7 @@ export async function borrowBook(borrowerSymbol, id) {
 
 /**
  * Return a book on-chain (server-side signed).
- * Calls `return_book(id: u32)`
+ * Calls `return_book(caller: Address, id: u32)`
  *
  * @param {number} id
  * @returns {{ txHash: string }}
@@ -195,6 +194,7 @@ export async function returnBook(id) {
 
   const operation = contract.call(
     "return_book",
+    nativeToScVal(keypair.publicKey(), { type: "address" }),
     nativeToScVal(id, { type: "u32" })
   );
 

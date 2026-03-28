@@ -82,10 +82,11 @@ router.post("/borrow", async (req, res) => {
   }
 
   try {
-    const result = await borrowBook(borrower, parseInt(book_id, 10));
+    // Note: borrower parameter is ignored as we now use the server's keypair
+    const result = await borrowBook(parseInt(book_id, 10));
     res.json({
       success: true,
-      message: `Book #${book_id} borrowed by "${borrower}"`,
+      message: `Book #${book_id} borrowed`,
       tx_hash: result.txHash,
       explorer_url: `https://stellar.expert/explorer/testnet/tx/${result.txHash}`,
     });
@@ -141,18 +142,20 @@ router.post("/prepare", async (req, res) => {
     switch (method) {
       case "add_book":
         scArgs = [
+          nativeToScVal(publicKey, { type: "address" }),
           nativeToScVal(args.title, { type: "string" }),
           nativeToScVal(args.author, { type: "string" }),
         ];
         break;
       case "borrow_book":
         scArgs = [
-          nativeToScVal(args.borrower, { type: "symbol" }),
+          nativeToScVal(publicKey, { type: "address" }),
           nativeToScVal(parseInt(args.book_id, 10), { type: "u32" }),
         ];
         break;
       case "return_book":
         scArgs = [
+          nativeToScVal(publicKey, { type: "address" }),
           nativeToScVal(parseInt(args.book_id, 10), { type: "u32" }),
         ];
         break;
@@ -190,7 +193,7 @@ router.post("/invoke", async (req, res) => {
         result = await getBook(parseInt(args.id, 10));
         break;
       case "borrow_book":
-        result = await borrowBook(args.borrower, parseInt(args.book_id, 10));
+        result = await borrowBook(parseInt(args.book_id, 10));
         break;
       case "return_book":
         result = await returnBook(parseInt(args.book_id, 10));

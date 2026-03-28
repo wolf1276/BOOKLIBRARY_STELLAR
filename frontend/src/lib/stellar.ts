@@ -127,11 +127,11 @@ export async function getBook(id: number) {
   return result;
 }
 
-export async function borrowBook(borrowerSymbol: string, id: number) {
+export async function borrowBook(id: number) {
   const keypair = getServerKeypair();
   const operation = contract.call(
     "borrow_book",
-    nativeToScVal(borrowerSymbol, { type: "symbol" }),
+    nativeToScVal(keypair.publicKey(), { type: "address" }),
     nativeToScVal(id, { type: "u32" })
   );
 
@@ -141,7 +141,11 @@ export async function borrowBook(borrowerSymbol: string, id: number) {
 
 export async function returnBook(id: number) {
   const keypair = getServerKeypair();
-  const operation = contract.call("return_book", nativeToScVal(id, { type: "u32" }));
+  const operation = contract.call(
+    "return_book",
+    nativeToScVal(keypair.publicKey(), { type: "address" }),
+    nativeToScVal(id, { type: "u32" })
+  );
 
   const { txHash } = await buildAndSubmitTx(keypair, operation);
   return { txHash };

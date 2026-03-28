@@ -155,11 +155,9 @@ export default function BookDetailPage() {
               className="brut-btn brut-btn-blue text-base"
               onClick={async () => {
                 try {
-                  const borrower = prompt("Enter borrower name (max 9 chars):");
-                  if (!borrower) return;
                   const contractId = (book as any).contract_book_id;
                   if (!contractId) { alert("This book has no on-chain ID."); return; }
-                  const result = await borrowBook(borrower.slice(0, 9), contractId);
+                  const result = await borrowBook(Number(contractId));
                   alert(`Book borrowed! TX: ${result.txHash}`);
                 } catch (err: any) {
                   alert(`Borrow failed: ${err.message}`);

@@ -202,17 +202,16 @@ export async function getBook(
 
 /**
  * Borrow a book on-chain (signed by connected Freighter wallet).
- * Calls `borrow_book(borrower: Symbol, id: u32)`
+ * Calls `borrow_book(borrower: Address, id: u32)`
  */
 export async function borrowBook(
-  borrowerSymbol: string,
   id: number
 ): Promise<{ txHash: string }> {
   const publicKey = await ensureWalletConnected();
 
   const operation = contract.call(
     "borrow_book",
-    nativeToScVal(borrowerSymbol, { type: "symbol" }),
+    nativeToScVal(publicKey, { type: "address" }),
     nativeToScVal(id, { type: "u32" })
   );
 
@@ -222,7 +221,7 @@ export async function borrowBook(
 
 /**
  * Return a book on-chain (signed by connected Freighter wallet).
- * Calls `return_book(id: u32)`
+ * Calls `return_book(caller: Address, id: u32)`
  */
 export async function returnBook(
   id: number
@@ -231,6 +230,7 @@ export async function returnBook(
 
   const operation = contract.call(
     "return_book",
+    nativeToScVal(publicKey, { type: "address" }),
     nativeToScVal(id, { type: "u32" })
   );
 
