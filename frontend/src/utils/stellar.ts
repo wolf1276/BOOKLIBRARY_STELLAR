@@ -174,6 +174,7 @@ export async function addBook(
 
   const operation = contract.call(
     "add_book",
+    nativeToScVal(publicKey, { type: "address" }),
     nativeToScVal(title, { type: "string" }),
     nativeToScVal(author, { type: "string" })
   );

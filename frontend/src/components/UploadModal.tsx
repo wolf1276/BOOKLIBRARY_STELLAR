@@ -30,7 +30,7 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
 
     try {
       // ── Step 1: Upload to API (IPFS + database) ──
-      const API = process.env.NEXT_PUBLIC_API_URL || "";
+      const API = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, ""); // Remove trailing slash
       const uploadEndpoint = API ? `${API}/api/books` : "/api/books";
 
       let walletAddress = "unknown";
@@ -40,22 +40,27 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
         // Wallet not connected — proceed without it
       }
 
-      const res = await fetch(uploadEndpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: form.title,
-          author: form.author,
-          genre: form.genre,
-          description: form.description,
-          owner_wallet: walletAddress,
-        }),
-      });
+      let res;
+      try {
+        res = await fetch(uploadEndpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: form.title,
+            author: form.author,
+            genre: form.genre,
+            description: form.description,
+            owner_wallet: walletAddress,
+          }),
+        });
+      } catch (fetchErr: any) {
+        throw new Error(`Network failure: ${fetchErr.message}. The API might be unreachable.`);
+      }
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Failed to upload to API");
+        throw new Error(data.error || data.message || `Server error (${res.status}): Failed to store book metadata.`);
       }
 
       // ── Step 2: Register on-chain via Freighter wallet signing ──

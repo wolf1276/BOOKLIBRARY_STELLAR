@@ -25,7 +25,7 @@ export default function LibraryPage() {
       const matchVerified = !onlyVerified || b.verified;
       return matchSearch && matchGenre && matchVerified;
     });
-  }, [search, genre, onlyVerified]);
+  }, [search, genre, onlyVerified, books]);
 
   return (
     <div className="min-h-screen bg-off-black pt-28 pb-20 px-6 md:px-16">

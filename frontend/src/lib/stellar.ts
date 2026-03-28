@@ -37,7 +37,7 @@ function getServerKeypair() {
 }
 
 // ─── Helper: build, simulate, sign, and submit a transaction ─
-async function buildAndSubmitTx(sourceKeypair, operation) {
+async function buildAndSubmitTx(sourceKeypair: Keypair, operation: any) {
   const account = await server.getAccount(sourceKeypair.publicKey());
 
   let tx = new TransactionBuilder(account, {
@@ -76,7 +76,7 @@ async function buildAndSubmitTx(sourceKeypair, operation) {
 }
 
 // ─── Helper: simulate a read-only call (no signing needed) ─
-async function simulateReadOnly(operation, sourcePublicKey) {
+async function simulateReadOnly(operation: any, sourcePublicKey?: string) {
   const pubKey = sourcePublicKey || getServerKeypair().publicKey();
   const account = await server.getAccount(pubKey);
 
@@ -107,6 +107,7 @@ export async function addBook(title: string, author: string) {
   const keypair = getServerKeypair();
   const operation = contract.call(
     "add_book",
+    nativeToScVal(keypair.publicKey(), { type: "address" }),
     nativeToScVal(title, { type: "string" }),
     nativeToScVal(author, { type: "string" })
   );
