@@ -39,7 +39,7 @@ fn test_initialize() {
 }
 
 #[test]
-#[should_panic(expected = "Already initialized")]
+#[should_panic(expected = "Error(Contract, #1)")]
 fn test_double_initialize_panics() {
     let (env, client, _admin, _token) = setup_env();
     let admin2 = Address::generate(&env);
@@ -83,7 +83,7 @@ fn test_add_multiple_books() {
 }
 
 #[test]
-#[should_panic(expected = "Unauthorized")]
+#[should_panic(expected = "Error(Contract, #3)")]
 fn test_non_admin_cannot_add_book() {
     let (env, client, _admin, _token) = setup_env();
     let stranger = Address::generate(&env);
@@ -124,7 +124,7 @@ fn test_borrow_book() {
 }
 
 #[test]
-#[should_panic(expected = "AlreadyBorrowed")]
+#[should_panic(expected = "Error(Contract, #5)")]
 fn test_double_borrow_panics() {
     let (env, client, admin, token) = setup_env();
 
@@ -145,7 +145,7 @@ fn test_double_borrow_panics() {
 }
 
 #[test]
-#[should_panic(expected = "BookNotFound")]
+#[should_panic(expected = "Error(Contract, #4)")]
 fn test_borrow_nonexistent_book() {
     let (env, client, _admin, token) = setup_env();
     let borrower = Address::generate(&env);
@@ -176,7 +176,7 @@ fn test_return_book() {
 }
 
 #[test]
-#[should_panic(expected = "NotBorrowed")]
+#[should_panic(expected = "Error(Contract, #6)")]
 fn test_return_unborrowed_book_panics() {
     let (env, client, admin, _token) = setup_env();
 
@@ -191,7 +191,7 @@ fn test_return_unborrowed_book_panics() {
 }
 
 #[test]
-#[should_panic(expected = "NotBorrower")]
+#[should_panic(expected = "Error(Contract, #7)")]
 fn test_wrong_borrower_cannot_return() {
     let (env, client, admin, token) = setup_env();
 
