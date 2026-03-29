@@ -23,7 +23,11 @@ export const RPC_URL =
 export const NETWORK_PASSPHRASE = Networks.TESTNET;
 
 const server = new SorobanRpc.Server(RPC_URL);
-const contract = new Contract(CONTRACT_ID);
+
+// Use a getter for lazy initialization
+function getContract() {
+  return new Contract(CONTRACT_ID);
+}
 
 // ─── Helper: get a funded keypair for server-side signing ──
 function getServerKeypair() {
@@ -105,7 +109,7 @@ async function simulateReadOnly(operation: any, sourcePublicKey?: string) {
 
 export async function addBook(title: string, author: string) {
   const keypair = getServerKeypair();
-  const operation = contract.call(
+  const operation = getContract().call(
     "add_book",
     nativeToScVal(keypair.publicKey(), { type: "address" }),
     nativeToScVal(title, { type: "string" }),
@@ -122,14 +126,14 @@ export async function addBook(title: string, author: string) {
 }
 
 export async function getBook(id: number) {
-  const operation = contract.call("get_book", nativeToScVal(id, { type: "u32" }));
+  const operation = getContract().call("get_book", nativeToScVal(id, { type: "u32" }));
   const result = await simulateReadOnly(operation);
   return result;
 }
 
 export async function borrowBook(id: number) {
   const keypair = getServerKeypair();
-  const operation = contract.call(
+  const operation = getContract().call(
     "borrow_book",
     nativeToScVal(keypair.publicKey(), { type: "address" }),
     nativeToScVal(id, { type: "u32" })
@@ -141,7 +145,7 @@ export async function borrowBook(id: number) {
 
 export async function returnBook(id: number) {
   const keypair = getServerKeypair();
-  const operation = contract.call(
+  const operation = getContract().call(
     "return_book",
     nativeToScVal(keypair.publicKey(), { type: "address" }),
     nativeToScVal(id, { type: "u32" })
@@ -153,7 +157,7 @@ export async function returnBook(id: number) {
 
 export async function prepareTransaction(publicKey: string, method: string, args: any[]) {
   const account = await server.getAccount(publicKey);
-  const operation = contract.call(method, ...args);
+  const operation = getContract().call(method, ...args);
 
   let tx = new TransactionBuilder(account, {
     fee: BASE_FEE,
