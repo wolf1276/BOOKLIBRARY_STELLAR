@@ -9,7 +9,18 @@
 [![Stellar](https://img.shields.io/badge/Blockchain-Stellar%20Soroban-black?style=for-the-badge&logo=stellar)](https://stellar.org)
 [![Next.js](https://img.shields.io/badge/Framework-Next.js%2014-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
 [![Vercel](https://img.shields.io/badge/Deployment-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com)
+[![CI/CD Status](https://img.shields.io/badge/CI%2FCD-Passing-success?style=for-the-badge&logo=github-actions)](https://github.com/wolf1276/BOOKLIBRARY_STELLAR/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+
+---
+
+## 📱 Mobile Responsive View & CI/CD
+
+<p align="center">
+  <img src="./mobile_view.png" width="300" alt="Mobile View">
+  <img src="./cicd_status.png" width="500" alt="CI/CD Pipeline">
+</p>
+
 
 ---
 
@@ -83,6 +94,10 @@ Visit `http://localhost:3000` to interact with your local environment.
 
 Current contract deployed on **Stellar Testnet**:
 `CBYNK3NUXBOEWLQQHACBMTH7JLHV4PSNJ22VPSHK77MCZZZZOSC3PBJM`
+
+**Deployment Transaction**:
+`1da27be944444aa0944e0a26463a9da0ec127619023c4d59713f395017cda074`
+
 
 ### Available Functions
 | Method | Description | Parameters |

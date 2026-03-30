@@ -1,0 +1,147 @@
+warning: use of deprecated method `soroban_sdk::events::Events::publish`: use the #[contractevent] macro on a contract event type
+  --> contracts/book-library/src/lib.rs:77:14
+   |
+77 | ...   .publish((EVT_INIT,), (admin, token, deposit_amount, env.ledger()....
+   |        ^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated method `soroban_sdk::events::Events::publish`: use the #[contractevent] macro on a contract event type
+   --> contracts/book-library/src/lib.rs:113:14
+    |
+113 | ...   .publish((EVT_BOOK_ADD, caller), (count, title, author, env.ledge...
+    |        ^^^^^^^
+
+warning: use of deprecated method `soroban_sdk::events::Events::publish`: use the #[contractevent] macro on a contract event type
+   --> contracts/book-library/src/lib.rs:166:14
+    |
+166 | ...   .publish((EVT_BOOK_BRW, borrower), (id, title, deposit, env.ledge...
+    |        ^^^^^^^
+
+warning: use of deprecated method `soroban_sdk::events::Events::publish`: use the #[contractevent] macro on a contract event type
+   --> contracts/book-library/src/lib.rs:213:14
+    |
+213 | ...   .publish((EVT_BOOK_RET, caller), (id, title, deposit, env.ledger(...
+    |        ^^^^^^^
+
+warning: use of deprecated method `soroban_sdk::Env::register_stellar_asset_contract`: use [Env::register_stellar_asset_contract_v2]
+  --> contracts/book-library/src/test.rs:16:24
+   |
+16 |     let token_id = env.register_stellar_asset_contract(token_admin.clone...
+   |                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused variable: `token_admin_client`
+  --> contracts/book-library/src/test.rs:18:9
+   |
+18 |     let token_admin_client = token::StellarAssetClient::new(&env, &token...
+   |         ^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_token_admin_client`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `admin`
+  --> contracts/book-library/src/test.rs:28:9
+   |
+28 |     let admin = Address::generate(env); // This works because mock_all_a...
+   |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_admin`
+
+warning: `book-library` (lib test) generated 7 warnings (run `cargo fix --lib -p book-library --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.58s
+     Running unittests src/lib.rs (/Users/ahir/Projects/BOOKLIBRARY_STELLAR/target/debug/deps/book_library-9d1da82bf24ae689)
+
+running 13 tests
+Writing test snapshot file for test "test::test_add_multiple_books" to "test_snapshots/test/test_add_multiple_books.1.json".
+Writing test snapshot file for test "test::test_get_nonexistent_book" to "test_snapshots/test/test_get_nonexistent_book.1.json".
+Writing test snapshot file for test "test::test_add_book" to "test_snapshots/test/test_add_book.1.json".
+
+thread 'test::test_double_initialize_panics' (2291852) panicked at /Users/ahir/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/soroban-env-host-25.0.1/src/host.rs:907:9:
+HostError: Error(Contract, #1)
+
+Event log (newest first):
+   0: [Diagnostic Event] topics:[error, Error(Contract, #1)], data:"escalating error to panic"
+   1: [Diagnostic Event] topics:[error, Error(Contract, #1)], data:["contract call failed", initialize, [CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3IM, CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMDR4, 100]]
+   2: [Failed Diagnostic Event (not emitted)] contract:CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM, topics:[error, Error(Contract, #1)], data:"escalating Ok(ScErrorType::Contract) frame-exit to Err"
+   3: [Failed Diagnostic Event (not emitted)] contract:CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM, topics:[fn_return, initialize], data:Error(Contract, #1)
+   4: [Diagnostic Event] topics:[fn_call, CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM, initialize], data:[CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3IM, CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMDR4, 100]
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'test::test_borrow_nonexistent_book' (2291850) panicked at /Users/ahir/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/soroban-env-host-25.0.1/src/host.rs:907:9:
+HostError: Error(Contract, #4)
+
+Event log (newest first):
+   0: [Diagnostic Event] topics:[error, Error(Contract, #4)], data:"escalating error to panic"
+   1: [Diagnostic Event] topics:[error, Error(Contract, #4)], data:["contract call failed", borrow_book, [CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3IM, 999]]
+   2: [Failed Diagnostic Event (not emitted)] contract:CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM, topics:[error, Error(Contract, #4)], data:"escalating Ok(ScErrorType::Contract) frame-exit to Err"
+   3: [Failed Diagnostic Event (not emitted)] contract:CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM, topics:[fn_return, borrow_book], data:Error(Contract, #4)
+   4: [Diagnostic Event] topics:[fn_call, CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM, borrow_book], data:[CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3IM, 999]
+
+Writing test snapshot file for test "test::test_borrow_book" to "test_snapshots/test/test_borrow_book.1.json".
+
+thread 'test::test_double_borrow_panics' (2291851) panicked at /Users/ahir/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/soroban-env-host-25.0.1/src/host.rs:907:9:
+HostError: Error(Contract, #5)
+
+Event log (newest first):
+   0: [Diagnostic Event] topics:[error, Error(Contract, #5)], data:"escalating error to panic"
+   1: [Diagnostic Event] topics:[error, Error(Contract, #5)], data:["contract call failed", borrow_book, [CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMDR4, 1]]
+   2: [Failed Diagnostic Event (not emitted)] contract:CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM, topics:[error, Error(Contract, #5)], data:"escalating Ok(ScErrorType::Contract) frame-exit to Err"
+   3: [Failed Diagnostic Event (not emitted)] contract:CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM, topics:[fn_return, borrow_book], data:Error(Contract, #5)
+   4: [Diagnostic Event] topics:[fn_call, CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM, borrow_book], data:[CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMDR4, 1]
+
+Writing test snapshot file for test "test::test_double_borrow_panics" to "test_snapshots/test/test_double_borrow_panics.1.json".
+Writing test snapshot file for test "test::test_borrow_nonexistent_book" to "test_snapshots/test/test_borrow_nonexistent_book.1.json".
+Writing test snapshot file for test "test::test_double_initialize_panics" to "test_snapshots/test/test_double_initialize_panics.1.json".
+Writing test snapshot file for test "test::test_full_lifecycle" to "test_snapshots/test/test_full_lifecycle.1.json".
+test test::test_get_nonexistent_book ... ok
+Writing test snapshot file for test "test::test_initialize" to "test_snapshots/test/test_initialize.1.json".
+test test::test_double_initialize_panics - should panic ... ok
+test test::test_add_book ... ok
+
+thread 'test::test_non_admin_cannot_add_book' (2291862) panicked at /Users/ahir/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/soroban-env-host-25.0.1/src/host.rs:907:9:
+HostError: Error(Contract, #3)
+
+Event log (newest first):
+   0: [Diagnostic Event] topics:[error, Error(Contract, #3)], data:"escalating error to panic"
+   1: [Diagnostic Event] topics:[error, Error(Contract, #3)], data:["contract call failed", add_book, [CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3IM, "Rogue Book", "Nobody"]]
+   2: [Failed Diagnostic Event (not emitted)] contract:CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM, topics:[error, Error(Contract, #3)], data:"escalating Ok(ScErrorType::Contract) frame-exit to Err"
+   3: [Failed Diagnostic Event (not emitted)] contract:CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM, topics:[fn_return, add_book], data:Error(Contract, #3)
+   4: [Diagnostic Event] topics:[fn_call, CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM, add_book], data:[CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3IM, "Rogue Book", "Nobody"]
+
+Writing test snapshot file for test "test::test_non_admin_cannot_add_book" to "test_snapshots/test/test_non_admin_cannot_add_book.1.json".
+test test::test_add_multiple_books ... ok
+test test::test_borrow_nonexistent_book - should panic ... ok
+
+thread 'test::test_return_unborrowed_book_panics' (2291864) panicked at /Users/ahir/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/soroban-env-host-25.0.1/src/host.rs:907:9:
+HostError: Error(Contract, #6)
+
+Event log (newest first):
+   0: [Diagnostic Event] topics:[error, Error(Contract, #6)], data:"escalating error to panic"
+   1: [Diagnostic Event] topics:[error, Error(Contract, #6)], data:["contract call failed", return_book, [CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3IM, 1]]
+   2: [Failed Diagnostic Event (not emitted)] contract:CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM, topics:[error, Error(Contract, #6)], data:"escalating Ok(ScErrorType::Contract) frame-exit to Err"
+   3: [Failed Diagnostic Event (not emitted)] contract:CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM, topics:[fn_return, return_book], data:Error(Contract, #6)
+   4: [Diagnostic Event] topics:[fn_call, CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM, return_book], data:[CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3IM, 1]
+
+Writing test snapshot file for test "test::test_return_unborrowed_book_panics" to "test_snapshots/test/test_return_unborrowed_book_panics.1.json".
+Writing test snapshot file for test "test::test_return_book" to "test_snapshots/test/test_return_book.1.json".
+
+thread 'test::test_wrong_borrower_cannot_return' (2291865) panicked at /Users/ahir/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/soroban-env-host-25.0.1/src/host.rs:907:9:
+HostError: Error(Contract, #7)
+
+Event log (newest first):
+   0: [Diagnostic Event] topics:[error, Error(Contract, #7)], data:"escalating error to panic"
+   1: [Diagnostic Event] topics:[error, Error(Contract, #7)], data:["contract call failed", return_book, [CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMDR4, 1]]
+   2: [Failed Diagnostic Event (not emitted)] contract:CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM, topics:[error, Error(Contract, #7)], data:"escalating Ok(ScErrorType::Contract) frame-exit to Err"
+   3: [Failed Diagnostic Event (not emitted)] contract:CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM, topics:[fn_return, return_book], data:Error(Contract, #7)
+   4: [Diagnostic Event] topics:[fn_call, CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM, return_book], data:[CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMDR4, 1]
+
+Writing test snapshot file for test "test::test_wrong_borrower_cannot_return" to "test_snapshots/test/test_wrong_borrower_cannot_return.1.json".
+test test::test_initialize ... ok
+test test::test_borrow_book ... ok
+test test::test_double_borrow_panics - should panic ... ok
+test test::test_non_admin_cannot_add_book - should panic ... ok
+test test::test_full_lifecycle ... ok
+test test::test_return_unborrowed_book_panics - should panic ... ok
+test test::test_wrong_borrower_cannot_return - should panic ... ok
+test test::test_return_book ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
+
