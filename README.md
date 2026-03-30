@@ -1,6 +1,6 @@
 # 📚 BookLibrary Stellar
 
-![BookLibrary Stellar Hero](./image.png)
+![BookLibrary Stellar Hero](./public/screenshots/image.png)
 
 **A decentralized, on-chain library management system built on Stellar Soroban.** Register, borrow, and manage books with blockchain-backed security and immutable records, fully optimized for serverless performance on Vercel.
 
@@ -14,14 +14,26 @@
 
 ---
 
-## 📱 Mobile Responsive View & CI/CD
+## 📸 Showcase & Verification
 
-<p align="center">
-  <img src="./mobile_view.png" width="250" alt="Mobile View">
-  <img src="./cicd_status.png" width="400" alt="CI/CD Pipeline">
-  <img src="./tests_passed.png" width="300" alt="Tests Passed">
-</p>
-
+<div align="center">
+  <table border="0">
+    <tr>
+      <td align="center"><b>Mobile Experience</b></td>
+      <td align="center"><b>CI/CD Pipeline</b></td>
+    </tr>
+    <tr>
+      <td><img src="./public/screenshots/mobile_view.png" width="300" alt="Mobile View"></td>
+      <td><img src="./public/screenshots/cicd_status.png" width="500" alt="CI/CD Status"></td>
+    </tr>
+    <tr>
+      <td align="center" colspan="2"><b>Soroban Contract Tests (13 Passed)</b></td>
+    </tr>
+    <tr>
+      <td align="center" colspan="2"><img src="./public/screenshots/tests_passed.png" width="600" alt="Tests Passed"></td>
+    </tr>
+  </table>
+</div>
 
 ---
 
