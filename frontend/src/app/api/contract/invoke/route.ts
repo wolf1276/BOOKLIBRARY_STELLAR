@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
         result = await getBook(parseInt(args.id, 10));
         break;
       case "borrow_book":
-        result = await borrowBook(args.borrower, parseInt(args.book_id, 10));
+        result = await borrowBook(parseInt(args.book_id, 10));
         break;
       case "return_book":
         result = await returnBook(parseInt(args.book_id, 10));

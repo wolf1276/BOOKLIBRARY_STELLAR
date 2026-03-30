@@ -25,18 +25,22 @@ export async function POST(request: NextRequest) {
     switch (method) {
       case "add_book":
         scArgs = [
+          nativeToScVal(publicKey, { type: "address" }),
           nativeToScVal(args.title, { type: "string" }),
           nativeToScVal(args.author, { type: "string" }),
         ];
         break;
       case "borrow_book":
         scArgs = [
-          nativeToScVal(args.borrower, { type: "symbol" }),
+          nativeToScVal(publicKey, { type: "address" }),
           nativeToScVal(parseInt(args.book_id, 10), { type: "u32" }),
         ];
         break;
       case "return_book":
-        scArgs = [nativeToScVal(parseInt(args.book_id, 10), { type: "u32" })];
+        scArgs = [
+          nativeToScVal(publicKey, { type: "address" }),
+          nativeToScVal(parseInt(args.book_id, 10), { type: "u32" }),
+        ];
         break;
       default:
         return NextResponse.json(
