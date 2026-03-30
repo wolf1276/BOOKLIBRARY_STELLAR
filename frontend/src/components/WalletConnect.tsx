@@ -23,7 +23,7 @@ export default function WalletConnect() {
             setAddress(formatAddress(acc.address));
             setConnected(true);
           }
-        } catch (e) {
+        } catch {
           // not authorized yet
         }
       }

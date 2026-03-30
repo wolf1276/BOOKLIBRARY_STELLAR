@@ -16,7 +16,6 @@ import {
   getAddress,
   requestAccess,
   signTransaction,
-  getNetworkDetails,
 } from "@stellar/freighter-api";
 
 // ─── Configuration ─────────────────────────────────────────
@@ -63,7 +62,7 @@ export async function ensureWalletConnected(): Promise<string> {
 async function buildSignAndSubmit(
   publicKey: string,
   operation: ReturnType<typeof contract.call>
-): Promise<{ txHash: string; returnValue: any }> {
+): Promise<{ txHash: string; returnValue: unknown }> {
   // Demo Mode: simulate a successful transaction
   if (typeof window !== "undefined" && (window.localStorage.getItem("DEMO_MODE") === "true" || window.location.search.includes("demo=true"))) {
     await new Promise(r => setTimeout(r, 2000));
@@ -138,7 +137,7 @@ async function buildSignAndSubmit(
 async function simulateReadOnly(
   operation: ReturnType<typeof contract.call>,
   publicKey?: string
-): Promise<any> {
+): Promise<unknown> {
   // For read-only, we need a source account — use provided or a dummy
   let sourceKey = publicKey;
   if (!sourceKey) {
@@ -194,7 +193,7 @@ export async function addBook(
 
   const { txHash, returnValue } = await buildSignAndSubmit(publicKey, operation);
 
-  return { txHash, bookId: returnValue };
+  return { txHash, bookId: returnValue as number | null };
 }
 
 /**
@@ -210,7 +209,7 @@ export async function getBook(
     nativeToScVal(id, { type: "u32" })
   );
 
-  return await simulateReadOnly(operation, publicKey);
+  return await simulateReadOnly(operation, publicKey) as { id: number; title: string; author: string; borrower: string | null } | null;
 }
 
 /**

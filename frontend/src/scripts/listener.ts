@@ -1,4 +1,4 @@
-import { rpc, Networks } from '@stellar/stellar-sdk';
+import { rpc } from '@stellar/stellar-sdk';
 
 /**
  * Advanced Event Streaming for BookLibrary
@@ -15,7 +15,7 @@ async function streamEvents() {
 
     console.log(`📡 Listening for events on contract: ${contractId}...`);
 
-    let startLedger = await rpcServer.getLatestLedger().then((l: any) => l.sequence);
+    let startLedger = await rpcServer.getLatestLedger().then((l: { sequence: number }) => l.sequence);
 
     while (true) {
         try {
@@ -42,7 +42,7 @@ async function streamEvents() {
 
             if (events.events.length > 0) {
                 // Update marker to newest event
-                startLedger = Math.max(...events.events.map((e: any) => parseInt(e.ledger))) + 1;
+                startLedger = Math.max(...events.events.map((e: { ledger: number }) => e.ledger)) + 1;
             }
 
             // Polling interval

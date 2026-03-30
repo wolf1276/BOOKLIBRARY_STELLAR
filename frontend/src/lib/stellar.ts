@@ -41,7 +41,7 @@ function getServerKeypair() {
 }
 
 // ─── Helper: build, simulate, sign, and submit a transaction ─
-async function buildAndSubmitTx(sourceKeypair: Keypair, operation: any) {
+async function buildAndSubmitTx(sourceKeypair: Keypair, operation: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
   const account = await server.getAccount(sourceKeypair.publicKey());
 
   let tx = new TransactionBuilder(account, {
@@ -80,7 +80,7 @@ async function buildAndSubmitTx(sourceKeypair: Keypair, operation: any) {
 }
 
 // ─── Helper: simulate a read-only call (no signing needed) ─
-async function simulateReadOnly(operation: any, sourcePublicKey?: string) {
+async function simulateReadOnly(operation: any, sourcePublicKey?: string) { // eslint-disable-line @typescript-eslint/no-explicit-any
   const pubKey = sourcePublicKey || getServerKeypair().publicKey();
   const account = await server.getAccount(pubKey);
 
@@ -155,7 +155,7 @@ export async function returnBook(id: number) {
   return { txHash };
 }
 
-export async function prepareTransaction(publicKey: string, method: string, args: any[]) {
+export async function prepareTransaction(publicKey: string, method: string, args: any[]) { // eslint-disable-line @typescript-eslint/no-explicit-any
   const account = await server.getAccount(publicKey);
   const operation = getContract().call(method, ...args);
 
