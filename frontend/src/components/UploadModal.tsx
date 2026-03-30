@@ -74,6 +74,23 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
         const result = await addBook(form.title, form.author);
         onChainTxHash = result.txHash;
         contractBookId = result.bookId;
+
+        // ── NEW: Update the database record with the result ──
+        if (data.book?.id) {
+          try {
+            await fetch(`/api/books/${data.book.id}`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                verified: true,
+                contract_book_id: contractBookId,
+                tx_hash: onChainTxHash,
+              }),
+            });
+          } catch (syncErr: any) {
+            console.warn("Failed to sync on-chain verification with DB:", syncErr.message);
+          }
+        }
       } catch (walletErr: any) {
         console.warn("On-chain registration via wallet failed:", walletErr.message);
         // Backend may have already registered it server-side

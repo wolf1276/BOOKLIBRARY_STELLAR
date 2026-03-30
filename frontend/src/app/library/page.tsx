@@ -14,7 +14,24 @@ export default function LibraryPage() {
   const [genre, setGenre] = useState("All");
   const [onlyVerified, setOnlyVerified] = useState(false);
   
-  const { books, loading, error } = useContractBooks();
+  const { books, loading, error, refetch } = useContractBooks();
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  const handleSyncAll = async () => {
+    setIsSyncing(true);
+    try {
+      for (const b of books) {
+        if (b.contract_book_id) {
+          await fetch(`/api/books/${b.id}?verify=true`);
+        }
+      }
+      await refetch();
+    } catch (err) {
+      console.error("Sync error:", err);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   const filtered = useMemo(() => {
     return books.filter((b) => {
@@ -30,22 +47,38 @@ export default function LibraryPage() {
   return (
     <div className="min-h-screen bg-off-black pt-28 pb-20 px-6 md:px-16">
       {/* Page Header */}
-      <div className="mb-10">
-        <div
-          className="text-xs font-bold text-yellow mb-3 uppercase tracking-widest"
-          style={{ fontFamily: "'IBM Plex Mono', monospace" }}
-        >
-          ✦ Browse Collection
+      <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <div
+            className="text-xs font-bold text-yellow mb-3 uppercase tracking-widest"
+            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+          >
+            ✦ Browse Collection
+          </div>
+          <h1
+            className="text-5xl md:text-7xl font-black text-white uppercase mb-4"
+            style={{ fontFamily: "'Space Grotesk', sans-serif", letterSpacing: "-0.02em" }}
+          >
+            The Library
+          </h1>
+          <p className="text-gray-400 text-lg max-w-xl" style={{ fontFamily: "'Inter', sans-serif" }}>
+            {books.length} books · {books.filter((b) => b.verified).length} on-chain verified
+          </p>
         </div>
-        <h1
-          className="text-5xl md:text-7xl font-black text-white uppercase mb-4"
-          style={{ fontFamily: "'Space Grotesk', sans-serif", letterSpacing: "-0.02em" }}
+
+        {/* Sync Button */}
+        <button
+          onClick={handleSyncAll}
+          disabled={loading || isSyncing}
+          className={`brut-btn ${isSyncing ? "bg-gray-400" : "brut-btn-yellow"} flex items-center gap-2 text-sm`}
         >
-          The Library
-        </h1>
-        <p className="text-gray-400 text-lg max-w-xl" style={{ fontFamily: "'Inter', sans-serif" }}>
-          {books.length} books · {books.filter((b) => b.verified).length} on-chain verified
-        </p>
+          {isSyncing ? (
+            <span className="w-4 h-4 border-2 border-off-black border-t-white animate-spin rounded-full" />
+          ) : (
+            "🔄"
+          )}
+          {isSyncing ? "Syncing..." : "Sync On-Chain"}
+        </button>
       </div>
 
       {/* Filters */}

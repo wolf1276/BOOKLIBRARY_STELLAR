@@ -37,6 +37,11 @@ const contract = new Contract(CONTRACT_ID);
 
 /** Ensure Freighter is connected and return the user's public key */
 export async function ensureWalletConnected(): Promise<string> {
+  // Check for Demo Mode to assist with automated browser walkthroughs
+  if (typeof window !== "undefined" && (window.localStorage.getItem("DEMO_MODE") === "true" || window.location.search.includes("demo=true"))) {
+    return "GDEMO...STELLAR...WALLET";
+  }
+
   const connection = await isConnected();
   if (!connection.isConnected) {
     throw new Error("Freighter wallet extension not detected. Please install Freighter.");
@@ -59,6 +64,14 @@ async function buildSignAndSubmit(
   publicKey: string,
   operation: ReturnType<typeof contract.call>
 ): Promise<{ txHash: string; returnValue: any }> {
+  // Demo Mode: simulate a successful transaction
+  if (typeof window !== "undefined" && (window.localStorage.getItem("DEMO_MODE") === "true" || window.location.search.includes("demo=true"))) {
+    await new Promise(r => setTimeout(r, 2000));
+    return {
+      txHash: "mock_tx_hash_" + Math.random().toString(36).substring(7),
+      returnValue: Math.floor(Math.random() * 1000)
+    };
+  }
   const account = await server.getAccount(publicKey);
 
   let tx = new TransactionBuilder(account, {

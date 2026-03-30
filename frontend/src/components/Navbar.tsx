@@ -26,20 +26,33 @@ export default function Navbar() {
           style={{ boxShadow: "6px 6px 0px #0A0A0A" }}
         >
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 no-underline">
-            <span
-              className="text-2xl font-bold text-off-black"
-              style={{ fontFamily: "'Space Grotesk', sans-serif", letterSpacing: "-0.03em" }}
-            >
-              📚 BOOKLIB
-            </span>
-            <span
-              className="bg-off-black text-yellow text-xs font-bold px-2 py-0.5 border-2 border-off-black"
-              style={{ fontFamily: "'IBM Plex Mono', monospace" }}
-            >
-              STELLAR
-            </span>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-2 no-underline">
+              <span
+                className="text-2xl font-bold text-off-black"
+                style={{ fontFamily: "'Space Grotesk', sans-serif", letterSpacing: "-0.03em" }}
+              >
+                📚 BOOKLIB
+              </span>
+              <span
+                className="bg-off-black text-yellow text-xs font-bold px-2 py-0.5 border-2 border-off-black"
+                style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+              >
+                STELLAR
+              </span>
+            </Link>
+            {typeof window !== "undefined" && window.location.search.includes("demo=true") && (
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="bg-blue text-white text-[10px] font-black px-2 py-0.5 border-2 border-off-black uppercase flex items-center gap-1"
+                style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+              >
+                <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                Demo Mode
+              </motion.span>
+            )}
+          </div>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-1">

@@ -41,6 +41,14 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
           const titleMatch = onChainBook.title === book.title;
           const authorMatch = onChainBook.author === book.author;
 
+          // ── SYNC: Update database to reflect verified status ──
+          if (!book.verified && isOnChain) {
+            await prisma.book.update({
+              where: { id: book.id },
+              data: { verified: true }
+            });
+          }
+
           return NextResponse.json({
             book_id: book.id,
             contract_book_id: book.contract_book_id,
@@ -82,6 +90,34 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
     console.error("GET /api/books/:id error:", err);
     return NextResponse.json(
       { error: err.message || "Failed to fetch book" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    const id = parseInt(params.id);
+    if (isNaN(id)) {
+      return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+    }
+
+    const body = await request.json();
+    const { verified, contract_book_id } = body;
+
+    const updatedBook = await prisma.book.update({
+      where: { id },
+      data: {
+        verified: verified ?? true,
+        contract_book_id: contract_book_id,
+      },
+    });
+
+    return NextResponse.json(updatedBook);
+  } catch (err: any) {
+    console.error("PATCH /api/books/:id error:", err);
+    return NextResponse.json(
+      { error: err.message || "Failed to update book" },
       { status: 500 }
     );
   }

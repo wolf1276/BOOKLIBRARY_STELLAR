@@ -150,27 +150,94 @@ export default function BookDetailPage() {
 
           {/* Actions */}
           <div className="flex flex-wrap gap-4">
-            <button className="brut-btn brut-btn-yellow text-base">📖 Read Book</button>
-            <button
-              className="brut-btn brut-btn-blue text-base"
-              onClick={async () => {
-                try {
-                  const contractId = (book as any).contract_book_id;
-                  if (!contractId) { alert("This book has no on-chain ID."); return; }
-                  const result = await borrowBook(Number(contractId));
-                  alert(`Book borrowed! TX: ${result.txHash}`);
-                } catch (err: any) {
-                  alert(`Borrow failed: ${err.message}`);
-                }
-              }}
-            >🔖 Borrow</button>
+            {book.ipfs_hash ? (
+              <a 
+                href={`https://ipfs.io/ipfs/${book.ipfs_hash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="brut-btn brut-btn-yellow text-base"
+              >
+                📖 Read Book
+              </a>
+            ) : (
+              <button disabled className="brut-btn bg-gray-400 text-base opacity-50 cursor-not-allowed">
+                📖 No File Found
+              </button>
+            )}
+
+            {!book.contract_book_id ? (
+              <button
+                className="brut-btn brut-btn-green text-base animate-pulse"
+                onClick={async (e) => {
+                  const btn = e.currentTarget;
+                  try {
+                    btn.innerHTML = "Initializing Registration...";
+                    // We call the same logic as the upload modal
+                    // Importing it via a helper might be cleaner, but for now we'll use the window.addBook logic if available or the utility
+                    const { addBook } = await import("@/utils/stellar");
+                    const result = await addBook(book.title, book.author);
+                    
+                    // Update the DB
+                    await fetch(`/api/books/${book.id}`, {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        verified: true,
+                        contract_book_id: result.bookId,
+                      }),
+                    });
+
+                    alert("Successfully registered on Stellar! Refreshing...");
+                    window.location.reload();
+                  } catch (err: any) {
+                    alert(`Registration failed: ${err.message}`);
+                    btn.innerHTML = "Register On-Chain";
+                  }
+                }}
+              >
+                + Register On-Chain
+              </button>
+            ) : (
+              <button
+                className="brut-btn brut-btn-blue text-base relative overflow-hidden group"
+                disabled={loading}
+                onClick={async (e) => {
+                  const btn = e.currentTarget;
+                  const originalText = btn.innerHTML;
+                  try {
+                    const contractId = (book as any).contract_book_id;
+                    if (!contractId) { alert("This book has no on-chain ID."); return; }
+                    
+                    btn.innerHTML = "Signing Transaction...";
+                    btn.style.opacity = "0.7";
+                    
+                    const result = await borrowBook(Number(contractId));
+                    
+                    btn.innerHTML = "Success! ✓";
+                    btn.style.backgroundColor = "#00E061";
+                    
+                    setTimeout(() => {
+                      alert(`Book borrowed successfully!\n\nStellar Transaction Hash:\n${result.txHash}`);
+                      btn.innerHTML = originalText;
+                      btn.style.opacity = "1";
+                      btn.style.backgroundColor = "";
+                    }, 500);
+                  } catch (err: any) {
+                    alert(`Borrow failed: ${err.message}`);
+                    btn.innerHTML = originalText;
+                    btn.style.opacity = "1";
+                  }
+                }}
+              >🔖 Borrow</button>
+            )}
+            
             <a
               href={`https://lab.stellar.org/r/testnet/contract/${CONTRACT_ID}`}
               target="_blank"
               rel="noopener noreferrer"
               className="brut-btn brut-btn-white text-base"
             >
-              🔗 View on Stellar ↗
+              🔗 View Contract ↗
             </a>
           </div>
         </motion.div>
