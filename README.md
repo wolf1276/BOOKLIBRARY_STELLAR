@@ -17,8 +17,9 @@
 ## 📱 Mobile Responsive View & CI/CD
 
 <p align="center">
-  <img src="./mobile_view.png" width="300" alt="Mobile View">
-  <img src="./cicd_status.png" width="500" alt="CI/CD Pipeline">
+  <img src="./mobile_view.png" width="250" alt="Mobile View">
+  <img src="./cicd_status.png" width="400" alt="CI/CD Pipeline">
+  <img src="./tests_passed.png" width="300" alt="Tests Passed">
 </p>
 
 
