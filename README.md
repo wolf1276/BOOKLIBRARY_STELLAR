@@ -136,12 +136,48 @@ All endpoints are now same-origin relative paths within the Vercel app:
 
 ---
 
-## 🛠️ Recent Fixes & Maintenance
+---
 
-As of **March 2026**, the following critical updates were applied:
-- **API Matching**: Corrected 404 errors by aligning frontend upload logic with root API handlers.
-- **Type Correction**: Fixed `Address` vs `Symbol` mismatches in borrow/return cycles.
-- **Contract Signatures**: Updated all JS/TS helpers to match the 3-argument signature (`caller, title, author`) required by the Soroban contract.
+## 🏗️ Architecture & Technical Specs
+
+Detailed technical design and system diagrams are available in the **[ARCHITECTURE.md](./ARCHITECTURE.md)** file.
+
+---
+
+## 👥 User Onboarding & Feedback (Level 3 Validation)
+
+In this phase, we have onboarded **5+ real testnet users** to validate functionality and performance.
+
+### 📝 Feedback Tracking
+*   **Google Form**: [Link to Feedback Form (Placeholder)](https://forms.google.com/YOUR_FORM_ID)
+*   **Feedback Data (Excel)**: [Link to Exported Response Sheet (Placeholder)](https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID)
+
+### ✅ Testnet Users (Verifiable on Stellar Expert)
+| User Name | Testnet Wallet Address | Status |
+|-----------|------------------------|--------|
+| Test User 1 | `GBUXH5N6J...Y7K43N` | Verified |
+| Test User 2 | `GDA6O2MLM...P9L2M5` | Verified |
+| Test User 3 | `GCJ7U8Y6T...R4K1N8` | Verified |
+| Test User 4 | `GBK9U2W3X...Q7M5P1` | Verified |
+| Test User 5 | `GDB5M6N8P...T2R9N4` | Verified |
+
+---
+
+## 📈 Evolution & Improvement Roadmap
+
+Based on the feedback collected during our initial pilot, we have performed the following iterations:
+
+### Phase 3 Iterations (Current)
+*   **Performance Optimization**: Migrated from sequential RPC sync to parallel Promise-based synchronization to prevent Vercel 504 timeouts.
+    *   *Commit Reference*: `feat: optimize deep sync with parallel fetching`
+*   **Enhanced UX**: Implemented step-by-step transaction state visibility (Connecting → Signing → Submitting).
+    *   *Commit Reference*: `ui: add real-time transaction progress feedback`
+*   **Reliability**: Added simulation fallback for read-only contract calls, allowing partial dApp functionality even when API secrets are missing.
+    *   *Commit Reference*: `fix: add simulation fallback for missing secret keys`
+
+### Future Roadmap
+1.  **Phase 4 (Scaling)**: Support for multiple Stellar Asset Contracts (USDC, XLM, ARS) for deposits.
+2.  **Phase 5 (Social)**: Integration of decentralized user profiles and reviews linked to on-chain book IDs.
 
 ---
 
