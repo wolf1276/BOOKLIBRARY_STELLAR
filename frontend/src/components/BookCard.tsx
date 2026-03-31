@@ -13,6 +13,8 @@ export interface Book {
   owner_wallet?: string;
   timestamp?: number;
   verified?: boolean;
+  contract_book_id?: number | null;
+  tx_hash?: string | null;
 }
 
 const COVER_COLORS = [

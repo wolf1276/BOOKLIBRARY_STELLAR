@@ -23,10 +23,10 @@ export async function POST(request: NextRequest) {
       tx_hash: result.txHash,
       explorer_url: `https://stellar.expert/explorer/testnet/tx/${result.txHash}`,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Return error:", err);
     return NextResponse.json(
-      { success: false, error: err.message },
+      { success: false, error: err instanceof Error ? err.message : "unknown error" },
       { status: 500 }
     );
   }

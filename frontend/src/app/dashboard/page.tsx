@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import WalletConnect from "@/components/WalletConnect";
-import BookCard, { Book } from "@/components/BookCard";
+import BookCard from "@/components/BookCard";
 import VerificationBadge from "@/components/VerificationBadge";
 import { useContractBooks } from "@/app/hooks/useContractBooks";
 
@@ -10,7 +10,7 @@ const CONTRACT_ID = "CBYNK3NUXBOEWLQQHACBMTH7JLHV4PSNJ22VPSHK77MCZZZZOSC3PBJM";
 
 
 export default function DashboardPage() {
-  const { books, loading, error } = useContractBooks();
+  const { books, loading } = useContractBooks();
 
   const STATS = [
     { label: "Total Books",      value: books.length.toString(),  color: "#FFE500", icon: "📚" },

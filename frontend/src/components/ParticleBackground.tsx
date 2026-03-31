@@ -3,19 +3,13 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 export default function ParticleBackground() {
-  const [windowSize, setWindowSize] = useState({ w: 1000, h: 1000 });
-
+  // windowSize removed as it is unused
   useEffect(() => {
-    const handleResize = () => {
-      setWindowSize({ w: window.innerWidth, h: window.innerHeight });
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    // Keep window reference if needed in future, but remove resize listener for now
   }, []);
 
   // Generate stable random particles on client side
-  const [particles, setParticles] = useState<any[]>([]);
+  const [particles, setParticles] = useState<{ id: number; x: number; y: number; size: number; color: string; delay: number; duration: number }[]>([]);
   useEffect(() => {
     const colors = ["#FFE500", "#0047FF", "#FF2E00", "#00E061", "#FFFFFF"];
     const newParticles = Array.from({ length: 40 }).map((_, i) => ({

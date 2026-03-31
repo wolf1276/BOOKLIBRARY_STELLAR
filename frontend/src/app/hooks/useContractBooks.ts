@@ -37,7 +37,7 @@ export function useContractBooks() {
       const data = await res.json();
 
       // Map backend book format to frontend Book interface
-      const mapped: Book[] = (data.books || []).map((b: any) => ({
+      const mapped: Book[] = (data.books || []).map((b: { id: string; title: string; author: string; genre?: string; verified?: boolean; ipfs_hash?: string; owner_wallet?: string; stellar_tx?: string; contract_book_id?: number | null }) => ({
         id: String(b.id),
         title: b.title,
         author: b.author,
@@ -51,9 +51,9 @@ export function useContractBooks() {
 
       setBooks(mapped);
       setError(null);
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Failed to fetch books:", e);
-      setError(e.message || "Failed to load books");
+      setError(e instanceof Error ? e.message : "Failed to load books");
     } finally {
       setLoading(false);
     }

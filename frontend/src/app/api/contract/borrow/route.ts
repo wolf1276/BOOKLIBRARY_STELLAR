@@ -28,17 +28,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = await borrowBook(borrower, parseInt(book_id, 10));
+    const result = await borrowBook(parseInt(book_id, 10));
     return NextResponse.json({
       success: true,
       message: `Book #${book_id} borrowed by "${borrower}"`,
       tx_hash: result.txHash,
       explorer_url: `https://stellar.expert/explorer/testnet/tx/${result.txHash}`,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Borrow error:", err);
     return NextResponse.json(
-      { success: false, error: err.message },
+      { success: false, error: err instanceof Error ? err.message : "unknown error" },
       { status: 500 }
     );
   }

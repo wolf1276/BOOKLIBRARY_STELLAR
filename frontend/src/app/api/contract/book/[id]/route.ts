@@ -43,10 +43,10 @@ export async function GET(request: Request, { params }: { params: Params }) {
         borrower: book.borrower || null,
       },
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Contract query error:", err);
     return NextResponse.json(
-      { success: false, error: err.message },
+      { success: false, error: err instanceof Error ? err.message : "unknown error" },
       { status: 500 }
     );
   }

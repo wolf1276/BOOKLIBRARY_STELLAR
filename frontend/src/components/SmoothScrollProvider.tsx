@@ -6,7 +6,7 @@ export default function SmoothScrollProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const lenisRef = useRef<any>(null);
+  const lenisRef = useRef<unknown>(null);
 
   useEffect(() => {
     let raf: number;
@@ -36,7 +36,9 @@ export default function SmoothScrollProvider({
 
     return () => {
       cancelAnimationFrame(raf);
-      lenisRef.current?.destroy();
+      if (lenisRef.current) {
+        (lenisRef.current as { destroy: () => void }).destroy();
+      }
     };
   }, []);
 

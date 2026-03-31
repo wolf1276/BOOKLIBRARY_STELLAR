@@ -71,12 +71,12 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
             error: "Book not found on-chain",
           });
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Contract query error:", err);
         return NextResponse.json({
           book_id: book.id,
           verified: false,
-          error: err.message,
+          error: err instanceof Error ? err.message : "unknown error",
         });
       }
     } else {
@@ -86,10 +86,10 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
         message: "No contract_book_id assigned",
       });
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("GET /api/books/:id error:", err);
     return NextResponse.json(
-      { error: err.message || "Failed to fetch book" },
+      { error: err instanceof Error ? err.message : "Failed to fetch book" },
       { status: 500 }
     );
   }
@@ -114,10 +114,10 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     });
 
     return NextResponse.json(updatedBook);
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("PATCH /api/books/:id error:", err);
     return NextResponse.json(
-      { error: err.message || "Failed to update book" },
+      { error: err instanceof Error ? err.message : "Failed to update book" },
       { status: 500 }
     );
   }

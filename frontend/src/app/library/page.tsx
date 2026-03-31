@@ -1,7 +1,7 @@
 "use client";
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import BookCard, { Book } from "@/components/BookCard";
+import BookCard from "@/components/BookCard";
 import { useContractBooks } from "@/app/hooks/useContractBooks";
 
 // Removed static ALL_BOOKS array
@@ -14,7 +14,7 @@ export default function LibraryPage() {
   const [genre, setGenre] = useState("All");
   const [onlyVerified, setOnlyVerified] = useState(false);
   
-  const { books, loading, error, refetch } = useContractBooks();
+  const { books, loading, refetch } = useContractBooks();
   const [isSyncing, setIsSyncing] = useState(false);
 
   const handleSyncAll = async () => {

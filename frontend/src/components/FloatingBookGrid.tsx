@@ -1,5 +1,5 @@
 "use client";
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { useState, useEffect, useCallback } from "react";
 
 export interface FloatingBook {
@@ -36,17 +36,14 @@ const SAMPLE_BOOKS = [
 function SingleFloatingBook({
   book,
   mouseX,
-  mouseY,
 }: {
   book: FloatingBook;
   mouseX: number;
-  mouseY: number;
 }) {
   const [hovered, setHovered] = useState(false);
 
   // Repel from mouse
   const repelX = hovered ? 0 : (book.x - mouseX) * 0.015;
-  const repelY = hovered ? 0 : (book.y - mouseY) * 0.015;
 
   return (
     <motion.div
@@ -139,11 +136,9 @@ function SingleFloatingBook({
 
 export default function FloatingBookGrid() {
   const [mouseX, setMouseX] = useState(50);
-  const [mouseY, setMouseY] = useState(50);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     setMouseX((e.clientX / window.innerWidth) * 100);
-    setMouseY((e.clientY / window.innerHeight) * 100);
   }, []);
 
   useEffect(() => {
@@ -213,7 +208,6 @@ export default function FloatingBookGrid() {
             key={book.id}
             book={book}
             mouseX={mouseX}
-            mouseY={mouseY}
           />
         ))}
       </div>

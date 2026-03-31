@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import VerificationBadge from "@/components/VerificationBadge";
-import WalletConnect from "@/components/WalletConnect";
 import BookCard, { Book } from "@/components/BookCard";
 import { borrowBook } from "@/utils/stellar";
 
@@ -189,8 +188,8 @@ export default function BookDetailPage() {
 
                     alert("Successfully registered on Stellar! Refreshing...");
                     window.location.reload();
-                  } catch (err: any) {
-                    alert(`Registration failed: ${err.message}`);
+                  } catch (err: unknown) {
+                    alert(`Registration failed: ${err instanceof Error ? err.message : "unknown error"}`);
                     btn.innerHTML = "Register On-Chain";
                   }
                 }}
@@ -205,7 +204,7 @@ export default function BookDetailPage() {
                   const btn = e.currentTarget;
                   const originalText = btn.innerHTML;
                   try {
-                    const contractId = (book as any).contract_book_id;
+                    const contractId = book.contract_book_id;
                     if (!contractId) { alert("This book has no on-chain ID."); return; }
                     
                     btn.innerHTML = "Signing Transaction...";
@@ -222,8 +221,8 @@ export default function BookDetailPage() {
                       btn.style.opacity = "1";
                       btn.style.backgroundColor = "";
                     }, 500);
-                  } catch (err: any) {
-                    alert(`Borrow failed: ${err.message}`);
+                  } catch (err: unknown) {
+                    alert(`Borrow failed: ${err instanceof Error ? err.message : "unknown error"}`);
                     btn.innerHTML = originalText;
                     btn.style.opacity = "1";
                   }

@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 
 export function useWebSocket(url: string) {
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<unknown[]>([]);
   const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export function useWebSocket(url: string) {
     };
   }, [url]);
 
-  const sendMessage = (message: any) => {
+  const sendMessage = (message: unknown) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(JSON.stringify(message));
     }

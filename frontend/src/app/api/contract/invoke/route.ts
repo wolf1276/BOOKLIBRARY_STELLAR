@@ -46,10 +46,10 @@ export async function POST(request: NextRequest) {
       method,
       result,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Invoke error:", err);
     return NextResponse.json(
-      { success: false, error: err.message },
+      { success: false, error: err instanceof Error ? err.message : "unknown error" },
       { status: 500 }
     );
   }

@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
       search: searchParams.get("search") || undefined,
     });
 
-    let where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (query.genre) where.genre = query.genre;
     if (query.verified === "true") where.verified = true;
@@ -49,10 +49,10 @@ export async function GET(request: NextRequest) {
 
     const books = await prisma.book.findMany({ where });
     return NextResponse.json({ count: books.length, books });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("GET /api/books error:", err);
     return NextResponse.json(
-      { error: err.message || "Failed to fetch books" },
+      { error: err instanceof Error ? err.message : "Failed to fetch books" },
       { status: 400 }
     );
   }
@@ -87,8 +87,8 @@ export async function POST(request: NextRequest) {
       const result = await addBook(data.title, data.author);
       stellarTxHash = result.txHash;
       contractBookId = result.bookId;
-    } catch (stellarErr: any) {
-      console.error("[Stellar] Contract call failed:", stellarErr.message);
+    } catch (stellarErr: unknown) {
+      console.error("[Stellar] Contract call failed:", stellarErr instanceof Error ? stellarErr.message : "unknown error");
     }
 
     // ── Step 3: Save to database ──
@@ -127,10 +127,10 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("POST /api/books error:", err);
     return NextResponse.json(
-      { error: "Upload failed", message: err.message },
+      { error: "Upload failed", message: err instanceof Error ? err.message : "unknown error" },
       { status: 500 }
     );
   }

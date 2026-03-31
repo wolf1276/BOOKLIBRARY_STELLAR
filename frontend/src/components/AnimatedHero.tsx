@@ -11,7 +11,7 @@ export default function AnimatedHero() {
   const lineRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let ctx: any;
+    let ctx: unknown;
 
     const initGSAP = async () => {
       const { gsap } = await import("gsap");
@@ -53,7 +53,7 @@ export default function AnimatedHero() {
 
     initGSAP();
 
-    return () => ctx?.revert();
+    return () => (ctx as { revert?: () => void })?.revert?.();
   }, []);
 
   return (
