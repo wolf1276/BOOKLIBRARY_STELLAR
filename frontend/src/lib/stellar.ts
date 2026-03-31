@@ -90,7 +90,17 @@ async function buildAndSubmitTx(sourceKeypair: Keypair, operation: any) { // esl
 
 // ─── Helper: simulate a read-only call (no signing needed) ─
 async function simulateReadOnly(operation: any, sourcePublicKey?: string) { // eslint-disable-line @typescript-eslint/no-explicit-any
-  const pubKey = sourcePublicKey || getServerKeypair().publicKey();
+  let pubKey = sourcePublicKey;
+  
+  if (!pubKey) {
+    try {
+      pubKey = getServerKeypair().publicKey();
+    } catch {
+      // Fallback for simulation (doesn't need to be funded or signed)
+      pubKey = "GDA7K754E4J542TML6U5H4YQ6PZ5M4O5X6O5O5O5O5O5O5O5O5O5O5O5"; 
+    }
+  }
+
   const account = await server.getAccount(pubKey);
 
   const tx = new TransactionBuilder(account, {

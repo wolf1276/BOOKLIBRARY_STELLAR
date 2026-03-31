@@ -11,24 +11,21 @@ export async function POST(request: NextRequest) {
     
     // 1. Get total count from contract
     const count = await getBookCount();
-    console.log(`[Sync] Found ${count} books on-chain.`);
-
-    let syncedCount = 0;
-    let newMatches = 0;
 
     // 2. Fetch all books from database
     const dbBooks = await prisma.book.findMany();
 
-    // 3. Loop through on-chain books (IDs are 1-based)
-    for (let i = 1; i <= count; i++) {
+    // 3. Process books in parallel to save time and avoid timeouts
+    const onChainIds = Array.from({ length: count }, (_, i) => i + 1);
+    
+    const results = await Promise.all(onChainIds.map(async (i) => {
         try {
             const onChainBook = await getBook(i);
-            if (!onChainBook) continue;
+            if (!onChainBook) return null;
 
             const { title, author } = onChainBook;
             
-            // 4. Find matching book in DB
-            // We match by Title (normalized) or Author
+            // 4. Find matching book in DB (normalized)
             const match = dbBooks.find(dbb => 
                 dbb.title.toLowerCase().trim() === title.toLowerCase().trim() &&
                 dbb.author.toLowerCase().trim() === author.toLowerCase().trim()
@@ -44,14 +41,19 @@ export async function POST(request: NextRequest) {
                             contract_book_id: i
                         }
                     });
-                    newMatches++;
+                    return { type: "new_match" };
                 }
-                syncedCount++;
+                return { type: "synced" };
             }
+            return null;
         } catch (e) {
             console.error(`[Sync] Failed to fetch on-chain book #${i}:`, e);
+            return null;
         }
-    }
+    }));
+
+    const syncedCount = results.filter(r => r !== null).length;
+    const newMatches = results.filter(r => r?.type === "new_match").length;
 
     return NextResponse.json({
         success: true,
