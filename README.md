@@ -4,13 +4,16 @@
 
 **A decentralized, on-chain library management system built on Stellar Soroban.** Register, borrow, and manage books with blockchain-backed security and immutable records, fully optimized for serverless performance on Vercel.
 
-### 🚀 [Live Global dApp](https://booklibrary-stellar.vercel.app) | 🎬 [Watch Demo Video](https://drive.google.com/file/d/1_kDxToFeFRmFSPYQkln-HvGdA6wlOUu-/view?usp=sharing)
+### 🚀 [Live Global dApp](https://booklibrary-stellar.vercel.app) | 🎬 [Watch Full Walkthrough](#-application-walkthrough)
 
-[![Stellar](https://img.shields.io/badge/Blockchain-Stellar%20Soroban-black?style=for-the-badge&logo=stellar)](https://stellar.org)
-[![Next.js](https://img.shields.io/badge/Framework-Next.js%2014-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
-[![Vercel](https://img.shields.io/badge/Deployment-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com)
-[![CI/CD Status](https://img.shields.io/badge/CI%2FCD-Passing-success?style=for-the-badge&logo=github-actions)](https://github.com/wolf1276/BOOKLIBRARY_STELLAR/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+---
+
+## 🎬 Application Walkthrough
+
+<div align="center">
+  <img src="./public/demo.webp" width="800" alt="BookLibrary Stellar Walkthrough">
+  <p><i>Real-time blockchain synchronization, on-chain registration, and neobrutalist UI verification.</i></p>
+</div>
 
 ---
 
