@@ -53,8 +53,8 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
             owner_wallet: walletAddress,
           }),
         });
-      } catch (fetchErr: any) {
-        throw new Error(`Network failure: ${fetchErr.message}. The API might be unreachable.`);
+      } catch (fetchErr: unknown) {
+        throw new Error(`Network failure: ${fetchErr instanceof Error ? fetchErr.message : "unknown error"}. The API might be unreachable.`);
       }
 
       const data = await res.json();
@@ -87,12 +87,12 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
                 tx_hash: onChainTxHash,
               }),
             });
-          } catch (syncErr: any) {
-            console.warn("Failed to sync on-chain verification with DB:", syncErr.message);
+          } catch (syncErr: unknown) {
+            console.warn("Failed to sync on-chain verification with DB:", syncErr instanceof Error ? syncErr.message : "unknown error");
           }
         }
-      } catch (walletErr: any) {
-        console.warn("On-chain registration via wallet failed:", walletErr.message);
+      } catch (walletErr: unknown) {
+        console.warn("On-chain registration via wallet failed:", walletErr instanceof Error ? walletErr.message : "unknown error");
         // Backend may have already registered it server-side
         // Continue with whatever the backend returned
       }
@@ -106,9 +106,9 @@ export default function UploadModal({ isOpen, onClose }: UploadModalProps) {
           : "",
       });
       setStep("success");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setErrorMsg(err.message);
+      setErrorMsg(err instanceof Error ? err.message : "unknown error");
       setStep("form");
     }
   };
