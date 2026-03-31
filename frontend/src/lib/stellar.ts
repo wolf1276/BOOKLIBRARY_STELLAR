@@ -66,10 +66,19 @@ async function buildAndSubmitTx(sourceKeypair: Keypair, operation: any) { // esl
     throw new Error(`Transaction submission failed: ${JSON.stringify(response.errorResult)}`);
   }
 
+  // Poll for confirmation — Soroban typically confirms in 5-7s on testnet
   let result = await server.getTransaction(response.hash);
-  while (result.status === "NOT_FOUND") {
-    await new Promise((r) => setTimeout(r, 1500));
+  let attempts = 0;
+  const MAX_ATTEMPTS = 20; // 20 × 600ms = 12 seconds max wait
+
+  while (result.status === "NOT_FOUND" && attempts < MAX_ATTEMPTS) {
+    await new Promise((r) => setTimeout(r, 600));
     result = await server.getTransaction(response.hash);
+    attempts++;
+  }
+
+  if (result.status === "NOT_FOUND") {
+    throw new Error(`Transaction timed out after ${MAX_ATTEMPTS} attempts. Hash: ${response.hash}`);
   }
 
   if (result.status === "FAILED") {
@@ -129,6 +138,12 @@ export async function getBook(id: number) {
   const operation = getContract().call("get_book", nativeToScVal(id, { type: "u32" }));
   const result = await simulateReadOnly(operation);
   return result;
+}
+
+export async function getBookCount() {
+  const operation = getContract().call("get_book_count");
+  const result = await simulateReadOnly(operation);
+  return result as number;
 }
 
 export async function borrowBook(id: number) {

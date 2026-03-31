@@ -166,16 +166,34 @@ export default function BookDetailPage() {
 
             {!book.contract_book_id ? (
               <button
-                className="brut-btn brut-btn-green text-base animate-pulse"
+                className="brut-btn brut-btn-green text-base"
                 onClick={async (e) => {
                   const btn = e.currentTarget;
+                  btn.disabled = true;
+                  btn.style.opacity = "0.8";
+
+                  const steps = [
+                    "⏳ Connecting to Soroban...",
+                    "📝 Signing Transaction...",
+                    "🚀 Submitting to Stellar...",
+                    "⛓️ Confirming on-chain...",
+                    "✅ Finalizing...",
+                  ];
+                  let stepIdx = 0;
+                  btn.innerHTML = steps[0];
+
+                  const stepper = setInterval(() => {
+                    stepIdx = (stepIdx + 1) % steps.length;
+                    btn.innerHTML = steps[stepIdx];
+                  }, 2000);
+
                   try {
-                    btn.innerHTML = "Initializing Registration...";
-                    // We call the same logic as the upload modal
-                    // Importing it via a helper might be cleaner, but for now we'll use the window.addBook logic if available or the utility
                     const { addBook } = await import("@/utils/stellar");
                     const result = await addBook(book.title, book.author);
-                    
+
+                    clearInterval(stepper);
+                    btn.innerHTML = "✅ Registered!";
+
                     // Update the DB
                     await fetch(`/api/books/${book.id}`, {
                       method: "PATCH",
@@ -186,11 +204,14 @@ export default function BookDetailPage() {
                       }),
                     });
 
-                    alert("Successfully registered on Stellar! Refreshing...");
+                    alert(`Successfully registered on Stellar!\n\nTx Hash: ${result.txHash}`);
                     window.location.reload();
                   } catch (err: unknown) {
+                    clearInterval(stepper);
                     alert(`Registration failed: ${err instanceof Error ? err.message : "unknown error"}`);
-                    btn.innerHTML = "Register On-Chain";
+                    btn.innerHTML = "+ Register On-Chain";
+                    btn.disabled = false;
+                    btn.style.opacity = "1";
                   }
                 }}
               >

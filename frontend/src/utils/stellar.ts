@@ -114,15 +114,23 @@ async function buildSignAndSubmit(
     );
   }
 
-  // Poll for result
+  // Poll for result — Soroban typically confirms in 5-7s on testnet
   let result = await server.getTransaction(response.hash);
-  while (result.status === "NOT_FOUND") {
-    await new Promise((r) => setTimeout(r, 1500));
+  let attempts = 0;
+  const MAX_ATTEMPTS = 20; // 20 * 600ms = 12s max wait
+
+  while (result.status === "NOT_FOUND" && attempts < MAX_ATTEMPTS) {
+    await new Promise((r) => setTimeout(r, 600));
     result = await server.getTransaction(response.hash);
+    attempts++;
+  }
+
+  if (result.status === "NOT_FOUND") {
+    throw new Error(`Transaction confirmation timed out after 12s. Hash: ${response.hash}`);
   }
 
   if (result.status === "FAILED") {
-    throw new Error(`Transaction failed on-chain`);
+    throw new Error(`Transaction failed on-chain. Status: ${result.status}`);
   }
 
   let returnValue = null;

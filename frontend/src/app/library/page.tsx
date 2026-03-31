@@ -20,14 +20,15 @@ export default function LibraryPage() {
   const handleSyncAll = async () => {
     setIsSyncing(true);
     try {
-      for (const b of books) {
-        if (b.contract_book_id) {
-          await fetch(`/api/books/${b.id}?verify=true`);
-        }
-      }
+      const res = await fetch("/api/sync/all", { method: "POST" });
+      if (!res.ok) throw new Error("Sync failed");
+      const data = await res.json();
+      console.log("Sync complete:", data);
       await refetch();
+      alert(`Sync Complete!\n\nBlockchain records: ${data.details.total_on_chain}\nVerified in DB: ${data.details.matches_found}`);
     } catch (err) {
       console.error("Sync error:", err);
+      alert("Blockchain synchronization failed. Please try again.");
     } finally {
       setIsSyncing(false);
     }

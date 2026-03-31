@@ -49,7 +49,7 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1, type: "spring", stiffness: 200 }}
-            className="border-4 border-off-black p-6"
+            className="border-4 border-off-black p-6 relative group"
             style={{ background: stat.color, boxShadow: "6px 6px 0px #0A0A0A" }}
           >
             <div className="text-3xl mb-2">{stat.icon}</div>
@@ -59,6 +59,23 @@ export default function DashboardPage() {
             <div className="text-xs font-bold text-off-black/70 uppercase mt-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
               {stat.label}
             </div>
+            
+            {stat.label === "Verified On-Chain" && (
+              <button 
+                onClick={async () => {
+                   const btn = document.activeElement as HTMLButtonElement;
+                   if (btn) btn.disabled = true;
+                   try {
+                     const res = await fetch("/api/sync/all", { method: "POST" });
+                     if (res.ok) window.location.reload();
+                   } catch(e) { console.error(e); }
+                }}
+                className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity bg-white/30 hover:bg-white/50 p-1 rounded border-2 border-off-black text-xs font-bold"
+                title="Sync with Blockchain"
+              >
+                🔄
+              </button>
+            )}
           </motion.div>
         ))}
       </div>
